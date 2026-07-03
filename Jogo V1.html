@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IA Consciente — Trilha até a Prova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0F172A;
+      --ink-soft: #475569;
+      --ink-faint: #94A3B8;
+      --paper: #F8FAFC;
+      --paper-line: #E2E8F0;
+      --card: #FFFFFF;
+      --teal: #0F766E; 
+      --teal-bg: #CCFBF1;
+      --amber: #B45309; 
+      --amber-bg: #FEF3C7;
+      --coral: #BE123C; 
+      --coral-bg: #FFE4E6;
+      --indigo: #4338CA; 
+      --indigo-bg: #E0E7FF;
+      --navy: #1E293B; 
+      --navy-bg: #F1F5F9;
+      --radius: 16px;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+    
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: radial-gradient(var(--paper-line) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      padding: 32px 16px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #app { width: 100%; max-width: 720px; }
+
+    h1, h2, h3 { font-family: var(--font-display); margin: 0 0 12px; letter-spacing: -0.02em; }
+    p { line-height: 1.6; margin: 0 0 16px; font-size: 15px; color: var(--ink-soft); }
+    strong { color: var(--ink); }
+    code { font-family: var(--font-mono); background: var(--paper-line); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      overflow: hidden;
+      margin-bottom: 24px;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .spiral {
+      height: 24px;
+      background-image: repeating-radial-gradient(circle at 14px 12px, var(--paper) 0 4px, var(--card) 5px 20px);
+      background-size: 28px 24px;
+      background-repeat: repeat-x;
+      border-bottom: 2px dashed var(--paper-line);
+    }
+
+    .card-body { padding: 32px; }
+    @media (max-width: 520px) { .card-body { padding: 24px; } }
+
+    .btn {
+      font-family: var(--font-body); font-weight: 600; font-size: 15px;
+      border: 2px solid var(--ink); border-radius: 999px;
+      padding: 12px 28px; cursor: pointer; background: var(--ink); color: var(--card);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+    }
+    
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn.secondary { background: transparent; color: var(--ink); }
+    .btn.secondary:hover:not(:disabled) { background: var(--paper-line); box-shadow: none; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn:focus-visible, .opt:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .detective-sentence:focus-visible {
+      outline: 3px solid var(--indigo); outline-offset: 2px;
+    }
+
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    
+    .link-btn {
+      background: none; border: none; font-family: var(--font-body); font-size: 14px; font-weight: 500;
+      color: var(--ink-soft); text-decoration: underline; cursor: pointer; padding: 6px; transition: color 0.2s;
+    }
+    .link-btn:hover { color: var(--ink); }
+
+    header.top { margin-bottom: 24px; width: 100%; animation: fadeIn 0.5s ease-out; }
+    .brand { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .brand h1 { font-size: 24px; margin: 0; color: var(--ink); }
+
+    .countdown {
+      font-family: var(--font-mono); background: var(--ink); color: var(--card);
+      border-radius: 12px; padding: 10px 16px; display: inline-flex; flex-direction: column; align-items: center;
+      min-width: 100px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .countdown .num { font-size: 20px; font-weight: 700; line-height: 1; }
+    .countdown .lbl { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; margin-top: 4px; }
+
+    .trail { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 16px; margin-bottom: 8px; scrollbar-width: none; }
+    .trail::-webkit-scrollbar { display: none; }
+    
+    .stone {
+      flex: none; min-width: 32px; height: 32px; padding: 0 10px; border-radius: 10px; border: 2px solid var(--paper-line);
+      display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+      color: var(--ink-faint); background: var(--card); transition: all 0.3s ease;
+    }
+    .stone.done { border-color: var(--ink); color: var(--card); background: var(--ink); }
+    .stone.now { border-color: var(--amber); color: var(--amber); background: var(--amber-bg); transform: scale(1.05); }
+
+    .meter-wrap { margin: 8px 0 24px; }
+    .meter-lbl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 8px; }
+    .meter-track { background: var(--paper-line); border-radius: 999px; height: 10px; overflow: hidden; }
+    .meter-fill { height: 100%; border-radius: 999px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s; }
+
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+    input[type=text], select {
+      width: 100%; font-family: var(--font-body); font-size: 15px; padding: 14px 16px;
+      border: 2px solid var(--paper-line); border-radius: 12px; background: var(--paper); color: var(--ink); transition: border-color 0.2s;
+    }
+    input[type=text]:focus, select:focus { border-color: var(--indigo); outline: none; background: var(--card); }
+    
+    .prompt-textarea {
+      width: 100%; font-family: var(--font-mono); font-size: 14px; padding: 16px; line-height: 1.6;
+      border: 2px solid var(--paper-line); border-radius: 12px; background: var(--paper); color: var(--ink); resize: vertical; min-height: 120px; transition: border-color 0.2s;
+    }
+    .prompt-textarea:focus { border-color: var(--indigo); outline: none; background: var(--card); }
+
+    .consent {
+      display: flex; gap: 12px; align-items: flex-start; background: var(--paper); border-radius: 12px; padding: 16px;
+      font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 24px;
+    }
+    .consent input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--ink); cursor: pointer; }
+
+    .situacao { font-size: 16px; line-height: 1.7; font-weight: 500; color: var(--ink); }
+    
+    .ai-bubble {
+      font-family: var(--font-mono); font-size: 14px; background: var(--ink); color: #E2E8F0;
+      border-radius: 12px; padding: 20px; margin: 24px 0; line-height: 1.7; position: relative;
+    }
+    .ai-bubble.light { background: var(--paper); color: var(--ink); border: 2px solid var(--paper-line); }
+    .ai-bubble .ai-head {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #5EEAD4; font-size: 11px;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .ai-bubble.light .ai-head { color: var(--ink-soft); }
+    .ai-bubble .dotpulse { width: 8px; height: 8px; border-radius: 50%; background: #5EEAD4; display: inline-block; animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+
+    .question { font-weight: 700; margin: 28px 0 16px; font-family: var(--font-display); font-size: 18px; color: var(--ink); }
+    
+    .opt {
+      display: flex; gap: 16px; align-items: center; width: 100%; text-align: left;
+      background: var(--card); border: 2px solid var(--paper-line); border-radius: 12px; padding: 16px;
+      margin-bottom: 12px; cursor: pointer; font-family: var(--font-body); font-size: 15px; color: var(--ink);
+      transition: all 0.2s ease;
+    }
+    .opt:hover:not(:disabled) { border-color: var(--ink); background: var(--paper); transform: translateX(4px); }
+    .opt .letter {
+      font-family: var(--font-mono); font-weight: 700; font-size: 14px; flex: none;
+      width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--paper-line);
+      display: flex; align-items: center; justify-content: center; color: var(--ink-soft); transition: all 0.2s;
+    }
+    .opt:hover:not(:disabled) .letter { border-color: var(--ink); color: var(--ink); background: var(--paper-line); }
+
+    .feedback { border-radius: 12px; padding: 20px; margin-top: 24px; animation: slideUp 0.3s ease-out; }
+    .feedback.certo { background: var(--teal-bg); border: 2px solid var(--teal); }
+    .feedback.parcial { background: var(--amber-bg); border: 2px solid var(--amber); }
+    .feedback.errado { background: var(--coral-bg); border: 2px solid var(--coral); }
+    
+    .feedback .badge {
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase;
+      font-weight: 700; margin-bottom: 8px; display: inline-block;
+    }
+    .feedback.certo .badge { color: var(--teal); }
+    .feedback.parcial .badge { color: var(--amber); }
+    .feedback.errado .badge { color: var(--coral); }
+    .feedback p { margin: 0; color: var(--ink); font-weight: 500; }
+
+    .cat-tag {
+      display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px;
+      padding: 6px 12px; border-radius: 999px; margin-top: 16px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .cat-fontes { background: #CCFBF1; color: var(--teal); }
+    .cat-autoria { background: #FEF3C7; color: var(--amber); }
+    .cat-dependencia { background: var(--navy-bg); color: var(--navy); }
+    .cat-vieses { background: #FFE4E6; color: var(--coral); }
+    .cat-privacidade { background: #E0E7FF; color: var(--indigo); }
+
+    .detective-sentence { cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: all 0.2s ease; display: inline; line-height: 2.2; }
+    .detective-sentence:hover { background: rgba(255,255,255,0.15); }
+    .detective-sentence.selected { background: rgba(245, 158, 11, 0.5); color: #fff; }
+    .detective-sentence.correct-flag { background: rgba(15, 118, 110, 0.6); color: #fff; }
+    .detective-sentence.correct-clean { opacity: 0.5; }
+    .detective-sentence.false-alarm { background: rgba(190, 18, 60, 0.6); color: #fff; }
+    .detective-sentence.missed { outline: 2px dashed #FDA4AF; outline-offset: 2px; }
+
+    .checklist { list-style: none; padding: 0; margin: 16px 0; }
+    .checklist li { padding: 12px 0; font-size: 15px; border-bottom: 1px solid var(--paper-line); display: flex; gap: 12px; align-items: flex-start; color: var(--ink); }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li.ok { color: var(--teal); font-weight: 600; }
+    .checklist li.no { color: var(--coral); font-weight: 600; }
+
+    .quiz-timerbar { background: var(--paper-line); border-radius: 999px; height: 8px; overflow: hidden; margin-top: 24px; }
+    .quiz-timerfill { height: 100%; border-radius: 999px; transition: width 1s linear, background-color 0.3s; }
+    .timer-num { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--ink-soft); text-align: right; margin-top: 8px; }
+
+    .stamp {
+      display: inline-block; border: 4px solid var(--ink); border-radius: 16px; padding: 12px 24px;
+      transform: rotate(-4deg); font-family: var(--font-display); font-weight: 700; font-size: 22px;
+      letter-spacing: 0.02em; margin: 12px 0 16px; color: var(--ink); box-shadow: 4px 4px 0px rgba(15, 23, 42, 0.1);
+    }
+    
+    .overall-num { font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: var(--ink-soft); margin-bottom: 24px; }
+
+    .bar-row { margin-bottom: 20px; }
+    .bar-row .bh { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
+    .bar-track { background: var(--paper-line); border-radius: 999px; height: 12px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+    .bar-row .desc { font-size: 13px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; }
+
+    .tip {
+      border-left: 4px solid var(--ink); padding: 16px; margin-bottom: 16px; background: var(--paper);
+      border-radius: 0 12px 12px 0; font-size: 14px; color: var(--ink); line-height: 1.6;
+    }
+
+    .badge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0 32px; }
+    .badge-card { border: 2px solid var(--paper-line); border-radius: 16px; padding: 20px; background: var(--paper); transition: all 0.3s ease; }
+    .badge-card.unlocked { border-color: var(--teal); background: var(--teal-bg); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(15, 118, 110, 0.1); }
+    .badge-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin-bottom: 6px; color: var(--ink); }
+    .badge-card:not(.unlocked) .badge-title { color: var(--ink-faint); }
+    .badge-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%); background: var(--ink); color: var(--card);
+      padding: 12px 24px; border-radius: 999px; font-size: 14px; font-weight: 500; font-family: var(--font-mono);
+      box-shadow: 0 10px 25px rgba(0,0,0,.2); z-index: 50; animation: slideUp 0.3s ease-out;
+    }
+
+    footer.credit { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 40px; font-family: var(--font-mono); font-weight: 500; }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =========================================================================
+   CONFIGURAÇÃO DO GOOGLE FORMS
+   ========================================================================= */
+const GOOGLE_FORM = {
+  formId: '1FAIpQLSdzCrVj_oROvfrkfkA2HaCpUIdXzQMMV2NzMVRwvtmAYlQ3-g',
+  entries: {
+    apelido:      'entry.2106692411',
+    perfil:       'entry.2045040280',
+    instituicao:  'entry.1583276075',
+    overall:      'entry.724800641',
+    nivel:        'entry.237531209',
+    fontes:       'entry.1566216450',
+    autoria:      'entry.1239779415',
+    dependencia:  'entry.32300032',
+    vieses:       'entry.1709206761',
+    privacidade:  'entry.52154918'
+  }
+};
+
+function formConfigurado(){
+  return GOOGLE_FORM.formId && GOOGLE_FORM.formId.indexOf('SEU_FORM_ID') === -1;
+}
+
+/* ---------- Dados do jogo ---------- */
+const CATS = {
+  fontes:      {label:'Verificação de Fontes',         desc:'Checar se dados, citações e referências indicadas pela IA realmente existem e procedem.', class:'cat-fontes', color:'var(--teal)'},
+  autoria:     {label:'Autoria e Ética Acadêmica',      desc:'Manter a autoria dos próprios textos e ser transparente sobre o uso de IA.', class:'cat-autoria', color:'var(--amber)'},
+  dependencia: {label:'Autonomia nos Estudos',          desc:'Usar a IA como apoio, sem abrir mão de pensar, treinar e aprender por conta própria.', class:'cat-dependencia', color:'var(--navy)'},
+  vieses:      {label:'Vieses e Alucinações',           desc:'Reconhecer que a IA pode errar com muita confiança e inventar informações que parecem reais.', class:'cat-vieses', color:'var(--coral)'},
+  privacidade: {label:'Privacidade e Segurança Digital',desc:'Cuidar de quais dados pessoais são compartilhados com ferramentas de IA.', class:'cat-privacidade', color:'var(--indigo)'}
+};
+
+const DICAS = {
+  fontes: 'Antes de usar um dado, uma citação ou uma fórmula que a IA sugeriu, procure confirmar em uma fonte confiável: livro, professor, site oficial ou base acadêmica.',
+  autoria: 'Use a IA para gerar ideias e repertório, mas escreva o texto final com suas próprias palavras — isso protege sua autoria e desenvolve sua escrita.',
+  dependencia: 'Tente resolver primeiro por conta própria e use a IA para tirar dúvidas pontuais, não para substituir todo o processo de aprender.',
+  vieses: 'A IA pode responder errado com toda a confiança do mundo. Desconfiar de uma resposta certinha demais não é falta de fé na tecnologia, é senso crítico.',
+  privacidade: 'Evite compartilhar dados pessoais sensíveis (CPF, endereço, dados de terceiros) em conversas com IA, mesmo quando parece mais prático.'
+};
+
+const BADGES = [
+  {key:'fontes', titulo:'Guardião(ã) das Fontes', desc:'Sempre confere se dados e referências realmente existem.'},
+  {key:'autoria', titulo:'Escritor(a) Autêntico(a)', desc:'Mantém a própria voz mesmo usando IA como apoio.'},
+  {key:'dependencia', titulo:'Mente Autônoma', desc:'Usa a IA sem abrir mão de pensar por conta própria.'},
+  {key:'vieses', titulo:'Caçador(a) de Alucinações', desc:'Não cai em respostas erradas ditas com confiança.'},
+  {key:'privacidade', titulo:'Zelador(a) da Privacidade', desc:'Protege os próprios dados pessoais ao usar IA.'}
+];
+
+const SCENARIOS = [
+  {
+    id:1, fase:1, dia:'D-60', titulo:'A fórmula estranha',
+    situacao:'Faltam 60 dias para o vestibular. Estudando Física, você pergunta a uma IA como resolver uma questão de lançamento oblíquo. Ela responde super segura, usando uma fórmula que você nunca viu nem no cursinho, nem no livro.',
+    ai:'Claro! É só aplicar X = V0 · sen(2θ) ÷ g² e você chega direto na resposta exata, sem precisar dos passos intermediários.',
+    categoria:'vieses',
+    opcoes:[
+      {texto:'Uso a fórmula sem questionar — ela respondeu com tanta confiança que deve estar certa.', nivel:'errado', pontos:15,
+       feedback:'Confiança no tom de resposta não é garantia de que a informação está correta. Ferramentas de IA generativa podem "alucinar" fórmulas e dados que parecem plausíveis, mas não existem — e isso pode custar caro numa questão de prova.'},
+      {texto:'Ignoro essa resposta e decido nunca mais usar IA para estudar.', nivel:'parcial', pontos:55,
+       feedback:'Evitar a ferramenta por completo também não resolve: o desafio não é "usar ou não usar", e sim desenvolver o hábito de checar. Rejeitar tudo tira a chance de aproveitar o que a IA pode oferecer de bom quando bem usada.'},
+      {texto:'Comparo a fórmula com o material do cursinho, meu caderno, ou pergunto ao professor antes de usar.', nivel:'certo', pontos:100,
+       feedback:'Essa é a prática mais segura: cruzar a resposta da IA com fontes que você já confia. Isso não elimina o uso da ferramenta, só garante que você entende — e confirma — o que está aprendendo.'}
+    ]
+  },
+  {
+    id:2, fase:1, dia:'D-53', titulo:'A redação pronta',
+    situacao:'Faltam 53 dias. Depois de um simulado inteiro, ainda falta a redação sobre combate à desinformação. Cansado(a), você pensa em pedir para uma IA escrever o texto inteiro e simplesmente copiar.',
+    ai:'Aqui está sua redação completa, com introdução, desenvolvimento e conclusão, pronta para ser entregue.',
+    categoria:'autoria',
+    opcoes:[
+      {texto:'Copio e entrego exatamente como a IA escreveu, sem alterar nada.', nivel:'errado', pontos:15,
+       feedback:'Entregar um texto gerado por IA como se fosse seu compromete sua autoria e pode ser identificado como cópia. Além disso, você perde a chance de treinar justamente a habilidade que a prova avalia: sua própria argumentação.'},
+      {texto:'Uso o texto da IA como base, mas reescrevo boa parte com minhas próprias palavras.', nivel:'parcial', pontos:55,
+       feedback:'É um passo melhor, mas ainda deixa a estrutura de pensamento por conta da IA. O ideal é que as ideias centrais e os argumentos também sejam construídos por você.'},
+      {texto:'Peço à IA só sugestões de repertório e ideias, e escrevo a redação inteira com minhas próprias palavras.', nivel:'certo', pontos:100,
+       feedback:'Assim a IA vira apoio para brainstorm, não substituta da escrita. Você mantém a autoria do texto e continua desenvolvendo a habilidade de argumentar — essencial na prova, onde a IA não vai estar disponível.'}
+    ]
+  },
+  {
+    id:3, fase:1, dia:'D-46', titulo:'O atalho de todo dia',
+    situacao:'Faltam 46 dias. Toda vez que você encontra um exercício difícil de matemática, em vez de tentar resolver, você manda a questão direto para uma IA e copia a resposta, sem entender o passo a passo.',
+    ai:'Aqui está a resolução completa da questão, passo a passo.',
+    categoria:'dependencia',
+    opcoes:[
+      {texto:'Continuo fazendo isso — economizo tempo e já tenho a resposta certa.', nivel:'errado', pontos:15,
+       feedback:'Copiar sem entender economiza tempo agora, mas custa caro depois: na prova, sem IA disponível, o raciocínio que faltou treinar vai fazer falta.'},
+      {texto:'Tento resolver sozinho(a) primeiro, e só uso a IA se travar, para entender onde errei.', nivel:'certo', pontos:100,
+       feedback:'Esse é o uso que constrói autonomia: você treina o raciocínio e usa a IA como um tutor pontual, não como quem resolve por você.'},
+      {texto:'Paro de usar IA de vez para exercícios, mesmo quando travo de verdade.', nivel:'parcial', pontos:60,
+       feedback:'Evitar a ferramenta por completo não é necessário. Usada com equilíbrio — depois de tentar sozinho(a) — ela pode ajudar bastante a entender um erro.'}
+    ]
+  },
+  {
+    id:4, fase:1, dia:'D-39', titulo:'Repertório por encomenda',
+    situacao:'Faltam 39 dias. Você pede à IA sugestões de repertório sobre desigualdade educacional para a redação. Ela sugere um dado bem específico, atribuído a "uma pesquisa do IBGE".',
+    ai:'Segundo dados do IBGE, um percentual expressivo dos estudantes de baixa renda não conclui o ensino médio na idade esperada.',
+    categoria:'fontes',
+    opcoes:[
+      {texto:'Uso o dado direto na redação, confiando que a IA pesquisou certinho.', nivel:'errado', pontos:15,
+       feedback:'A IA pode inventar números e atribuí-los a instituições reais de forma bastante convincente. Usar um dado inventado na redação pode derrubar a credibilidade do texto todo.'},
+      {texto:'Busco confirmar se esse dado do IBGE realmente existe antes de usar.', nivel:'certo', pontos:100,
+       feedback:'Exatamente esse é o hábito que protege você: verificar a fonte original antes de usar qualquer dado como repertório, seja na redação, seja em um trabalho.'},
+      {texto:'Troco por um repertório genérico que já decorei, ignorando o que a IA sugeriu.', nivel:'parcial', pontos:55,
+       feedback:'É uma saída segura, mas evita o problema em vez de desenvolver a habilidade de checagem — que vai ser útil bem além dessa redação.'}
+    ]
+  },
+  {
+    id:5, fase:2, dia:'D-20', titulo:'A referência que não existe',
+    situacao:'Já na faculdade, você escreve o TCC e pede à IA sugestões de referências bibliográficas sobre seu tema. Ela devolve uma lista bem formatada, incluindo um artigo de uma revista renomada.',
+    ai:'SILVA, J. Inteligência artificial e educação superior. Revista Brasileira de Pesquisa Educacional, v. 12, n. 3, p. 45-62, 2023.',
+    categoria:'vieses',
+    opcoes:[
+      {texto:'Coloco a referência direto nas minhas citações, confiando no formato correto.', nivel:'errado', pontos:15,
+       feedback:'Ferramentas de IA generativa são conhecidas por "alucinar" referências que têm formato perfeito, mas simplesmente não existem. Em um trabalho acadêmico, isso é um erro grave — e pode ser interpretado como má conduta.'},
+      {texto:'Busco o artigo em bases acadêmicas (Google Acadêmico, SciELO, periódicos) para confirmar que ele existe.', nivel:'certo', pontos:100,
+       feedback:'Correto. Toda referência sugerida por IA precisa ser conferida em uma base confiável antes de entrar em um trabalho acadêmico.'},
+      {texto:'Removo essa referência e evito qualquer sugestão da IA no TCC, mesmo para brainstorm de temas.', nivel:'parcial', pontos:60,
+       feedback:'É uma reação cautelosa, mas radical demais: a IA pode ajudar a explorar temas e organizar ideias, desde que tudo passe por checagem depois.'}
+    ]
+  },
+  {
+    id:6, fase:2, dia:'D-15', titulo:'Preenchendo o formulário',
+    situacao:'Você está com dificuldade em um formulário da universidade e pede ajuda a uma IA, colando seu nome completo, CPF, RA e endereço no chat "para ela entender melhor o contexto".',
+    ai:'Entendido, com esses dados posso te ajudar a preencher o formulário corretamente.',
+    categoria:'privacidade',
+    opcoes:[
+      {texto:'Colo todos os dados normalmente, já que é só para a IA me ajudar.', nivel:'errado', pontos:15,
+       feedback:'Dados pessoais sensíveis (CPF, endereço, RA) não deveriam ser compartilhados com ferramentas de IA sem necessidade real. Eles podem ficar armazenados ou expostos de formas que você não controla.'},
+      {texto:'Uso a IA só para entender as partes confusas do formulário, sem digitar meus dados reais.', nivel:'certo', pontos:100,
+       feedback:'Essa é a prática mais segura: pedir ajuda com o "como fazer", sem entregar dados sensíveis que não são necessários para isso.'},
+      {texto:'Substituo meus dados reais por exemplos fictícios antes de perguntar.', nivel:'parcial', pontos:80,
+       feedback:'Boa estratégia também — mostra consciência sobre privacidade, mesmo optando por usar a IA no processo.'}
+    ]
+  },
+  {
+    id:7, fase:2, dia:'D-10', titulo:'O trabalho em grupo',
+    situacao:'No trabalho final de uma disciplina, um colega do grupo gera a parte dele inteira com IA e entrega sem avisar o restante do grupo, nem verificar se isso segue as regras da disciplina sobre uso de IA.',
+    ai:null,
+    categoria:'autoria',
+    opcoes:[
+      {texto:'Não falo nada — não é da minha conta o que ele faz na parte dele.', nivel:'errado', pontos:15,
+       feedback:'Mesmo não sendo seu texto, um uso não declarado de IA pode violar a política da disciplina e prejudicar o grupo inteiro se for identificado. Em um trabalho coletivo, a integridade acadêmica também é coletiva.'},
+      {texto:'Converso com ele e sugiro que o grupo declare o uso de IA conforme as regras da disciplina, revisando o conteúdo juntos.', nivel:'certo', pontos:100,
+       feedback:'Essa é a atitude mais responsável: transparência sobre o uso de IA e revisão coletiva protegem o grupo inteiro e respeitam as normas da disciplina.'},
+      {texto:'Aviso o professor diretamente, sem conversar antes com o colega.', nivel:'parcial', pontos:55,
+       feedback:'Pular a conversa direta pode ser precipitado. Vale tentar resolver dentro do grupo primeiro, guardando o contato com o professor para quando for realmente necessário.'}
+    ]
+  },
+  {
+    id:8, fase:2, dia:'D-5', titulo:'Organizando a reta final',
+    situacao:'Faltam poucos dias para a prova final do semestre. Você pede à IA ajuda para montar um cronograma de revisão baseado nos temas onde tem mais dificuldade.',
+    ai:'Aqui está um cronograma de revisão de 5 dias, organizado por tema, com blocos de estudo e pausas.',
+    categoria:'dependencia',
+    opcoes:[
+      {texto:'Uso o cronograma sugerido, mas sigo revisando com meu próprio material e testando meu conhecimento com perguntas que eu mesmo(a) elaboro a partir do que estudei.', nivel:'certo', pontos:100,
+       feedback:'Esse é um bom exemplo de uso equilibrado: a IA ajuda a organizar o tempo, mas o estudo ativo continua sendo feito por você.'},
+      {texto:'Peço também para a IA resumir todo o conteúdo, e estudo só pelos resumos dela.', nivel:'parcial', pontos:55,
+       feedback:'Resumos prontos podem ajudar, mas o próprio processo de resumir é parte importante da aprendizagem — reduzir tudo a esse atalho tira esse ganho.'},
+      {texto:'Desisto de usar IA até para organizar, com medo de virar dependente.', nivel:'parcial', pontos:65,
+       feedback:'Cautela válida, mas o uso da IA como ferramenta de organização — sem substituir o estudo em si — costuma ser seguro e produtivo.'}
+    ]
+  }
+];
+
+const QUIZ = [
+  {texto:'A IA generativa pode inventar informações, com toda a confiança, mesmo quando estão erradas.', correta:true, categoria:'vieses',
+   certoFb:'Verdadeiro. Esse fenômeno é chamado de "alucinação": a IA produz respostas erradas com a mesma segurança de uma resposta correta.'},
+  {texto:'Copiar um texto gerado por IA e entregá-lo como se fosse seu não é problema, desde que o conteúdo esteja correto.', correta:false, categoria:'autoria',
+   certoFb:'Falso. O problema não é só a correção do conteúdo, é a autoria: apresentar como seu um texto que você não escreveu compromete sua honestidade acadêmica.'},
+  {texto:'É seguro colar seus dados pessoais completos (CPF, endereço) em uma conversa com IA para pedir ajuda.', correta:false, categoria:'privacidade',
+   certoFb:'Falso. Dados pessoais sensíveis devem ser evitados em conversas com IA sempre que não forem estritamente necessários.'},
+  {texto:'Usar a IA para organizar um cronograma de estudos pode ser uma forma responsável de aproveitar a ferramenta.', correta:true, categoria:'dependencia',
+   certoFb:'Verdadeiro. O problema não é usar IA, é deixar de treinar o próprio raciocínio. Organização é um uso que não substitui o aprendizado.'},
+  {texto:'Sempre que a IA cita uma fonte ou referência, você pode confiar que ela existe de verdade.', correta:false, categoria:'fontes',
+   certoFb:'Falso. Referências e dados sugeridos por IA precisam ser verificados em fontes confiáveis antes de serem usados.'}
+];
+
+const DETECTIVE_SENTENCES = [
+  {texto:'O ENEM foi criado em 1998 pelo Ministério da Educação, inicialmente como um exame para avaliar o desempenho de estudantes ao final da educação básica.', suspeita:false},
+  {texto:'Desde 2009, suas notas passaram a ser aceitas por diversas universidades como parte do processo seletivo, complementando o vestibular tradicional.', suspeita:false},
+  {texto:'Segundo dados oficiais, mais de 90% dos estudantes brasileiros preferem o ENEM a qualquer outra forma de ingresso no ensino superior.', suspeita:true},
+  {texto:'A prova é dividida em quatro áreas do conhecimento, além da redação, geralmente aplicada em dois domingos consecutivos.', suspeita:false},
+  {texto:'De acordo com o "Instituto Nacional de Estudos", uma pesquisa de 2021 revelou que estudantes que usam IA generativa tiram nota 30% maior na redação.', suspeita:true},
+  {texto:'O tema da redação é mantido em sigilo até o dia da prova, definido por uma comissão responsável pela banca examinadora.', suspeita:false}
+];
+
+const QUIZ_TIME = 20;
+let quizTimerHandle = null;
+
+/* ---------- Estado ---------- */
+function estadoInicial(){
+  return {
+    screen:'intro',
+    player:{apelido:'', perfil:'', instituicao:'', consent:true},
+    stepIndex:0,
+    currentAnswer:null,
+    answers:[],
+    promptLab:{submitted:false, text:'', analysis:null},
+    detective:{selected:new Set(), submitted:false, score:0},
+    quizIndex:0,
+    quizAnswer:null,
+    quizAnswers:[],
+    quizTimeLeft:QUIZ_TIME,
+    resultado:null,
+    toastMsg:null
+  };
+}
+let state = estadoInicial();
+
+function resetGame(){
+  clearInterval(quizTimerHandle);
+  quizTimerHandle = null;
+  state = estadoInicial();
+  render();
+  window.scrollTo(0,0);
+}
+
+function escapeHtml(str){
+  return String(str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ---------- Navegação básica ---------- */
+function irParaPerfil(){ state.screen='perfil'; render(); window.scrollTo(0,0); }
+
+function comecarTrilha(){
+  const apelido = document.getElementById('inp-apelido').value.trim();
+  const perfil = document.getElementById('inp-perfil').value;
+  const instituicao = document.getElementById('inp-instituicao').value.trim();
+  const consent = document.getElementById('inp-consent').checked;
+  if(!perfil){ alert('Escolha uma opção de perfil para continuar.'); return; }
+  state.player = {apelido, perfil, instituicao, consent};
+  state.screen='scenario';
+  render();
+  window.scrollTo(0,0);
+}
+
+function responder(optIndex){
+  if(state.currentAnswer) return;
+  const cenario = SCENARIOS[state.stepIndex];
+  const opcao = cenario.opcoes[optIndex];
+  state.currentAnswer = {optIndex, opcao};
+  state.answers.push({scenarioId:cenario.id, categoria:cenario.categoria, pontos:opcao.pontos, nivel:opcao.nivel});
+  render();
+}
+
+function avancar(){
+  state.currentAnswer = null;
+  state.stepIndex++;
+  if(state.stepIndex === 4){ state.screen='promptlab'; }
+  else if(state.stepIndex >= SCENARIOS.length){ state.screen='detective'; }
+  else { state.screen='scenario'; }
+  render();
+  window.scrollTo(0,0);
+}
+
+function continuarPromptLab(){ state.screen='transicao'; render(); window.scrollTo(0,0); }
+function continuarFase2(){ state.screen='scenario'; render(); window.scrollTo(0,0); }
+function continuarDetective(){
+  state.screen='quiz';
+  state.quizIndex=0;
+  startQuizTimer();
+  render();
+  window.scrollTo(0,0);
+}
+
+/* ---------- Oficina de Prompts ---------- */
+function analisarPrompt(text){
+  const t = text.toLowerCase();
+  const pedeExplicacao = /(explica|por que|porque|como funciona|passo a passo|me ajude a entender|entender melhor|raciocínio|racioc[ií]nio|processo)/.test(t);
+  const pedeFonte = /(fonte|refer[eê]ncia|confirma|confirme|verdade|correto|confi[aá]vel|de onde vem|comprova)/.test(t);
+  const respostaPronta = /(fa[çc]a( tudo)? pra mim|faz( tudo)? pra mim|escreve( tudo)? pronto|escreve a redação inteira|resolve tudo|me d[aá] a resposta|s[oó] (me )?d[aá] a resposta|copia e cola|texto pronto)/.test(t);
+  return {pedeExplicacao, pedeFonte, respostaPronta};
+}
+
+function submeterPromptLab(){
+  const val = document.getElementById('prompt-input').value.trim();
+  if(val.length < 15){ alert('Escreva um pouco mais — pelo menos uma frase completa.'); return; }
+  const analysis = analisarPrompt(val);
+  state.promptLab = {text:val, submitted:true, analysis};
+  state.answers.push({scenarioId:'promptlab-explica', categoria:'dependencia', pontos: analysis.pedeExplicacao ? 100 : 35});
+  state.answers.push({scenarioId:'promptlab-fonte', categoria:'fontes', pontos: analysis.pedeFonte ? 100 : 35});
+  state.answers.push({scenarioId:'promptlab-autoria', categoria:'autoria', pontos: analysis.respostaPronta ? 25 : 100});
+  render();
+}
+
+/* ---------- Detetive de Alucinação ---------- */
+window.toggleSuspeita = function(i){
+  if(state.detective.submitted) return;
+  const set = state.detective.selected;
+  if(set.has(i)) set.delete(i); else set.add(i);
+  render();
+};
+
+window.handleSuspeitaKey = function(event, i){
+  if(event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    toggleSuspeita(i);
+  }
+};
+
+function conferirDetetive(){
+  if(state.detective.submitted) return;
+  let acertos = 0;
+  DETECTIVE_SENTENCES.forEach((s,i)=>{
+    const marcada = state.detective.selected.has(i);
+    if(marcada === s.suspeita) acertos++;
+  });
+  const score = Math.round(acertos / DETECTIVE_SENTENCES.length * 100);
+  state.detective.submitted = true;
+  state.detective.score = score;
+  state.answers.push({scenarioId:'detective-vieses', categoria:'vieses', pontos:score});
+  state.answers.push({scenarioId:'detective-fontes', categoria:'fontes', pontos:score});
+  render();
+}
+
+/* ---------- Quiz com cronômetro ---------- */
+function startQuizTimer(){
+  clearInterval(quizTimerHandle);
+  state.quizTimeLeft = QUIZ_TIME;
+  quizTimerHandle = setInterval(()=>{
+    state.quizTimeLeft--;
+    if(state.quizTimeLeft <= 0){
+      clearInterval(quizTimerHandle);
+      quizTimerHandle = null;
+      if(!state.quizAnswer) quizTimeout();
+    } else {
+      render();
+    }
+  }, 1000);
+}
+function stopQuizTimer(){ clearInterval(quizTimerHandle); quizTimerHandle = null; }
+
+function quizTimeout(){
+  if(state.quizAnswer) return;
+  const item = QUIZ[state.quizIndex];
+  state.quizAnswer = {escolha:null, acertou:false, timeout:true};
+  state.quizAnswers.push({categoria:item.categoria, pontos:15});
+  render();
+}
+
+function responderQuiz(escolha){
+  if(state.quizAnswer) return;
+  stopQuizTimer();
+  const item = QUIZ[state.quizIndex];
+  const acertou = escolha === item.correta;
+  state.quizAnswer = {escolha, acertou, timeout:false};
+  state.quizAnswers.push({categoria:item.categoria, pontos: acertou ? 100 : 15});
+  render();
+}
+
+function avancarQuiz(){
+  stopQuizTimer();
+  state.quizAnswer = null;
+  state.quizIndex++;
+  if(state.quizIndex >= QUIZ.length){ finalizarJogo(); }
+  else { startQuizTimer(); render(); window.scrollTo(0,0); }
+}
+
+/* ---------- Cálculo de resultado ---------- */
+function calcularResultado(){
+  const somas = {fontes:[], autoria:[], dependencia:[], vieses:[], privacidade:[]};
+  state.answers.forEach(a => somas[a.categoria].push(a.pontos));
+  state.quizAnswers.forEach(a => somas[a.categoria].push(a.pontos));
+  const scores = {};
+  Object.keys(somas).forEach(k=>{
+    const arr = somas[k];
+    scores[k] = arr.length ? Math.round(arr.reduce((s,v)=>s+v,0)/arr.length) : 0;
+  });
+  const overall = Math.round(Object.values(scores).reduce((s,v)=>s+v,0) / Object.keys(scores).length);
+  let nivel, nivelDesc;
+  if(overall >= 80){ nivel='Crítico(a) Consciente'; nivelDesc='Você usa a IA como ferramenta de apoio, mas mantém o controle: verifica, questiona e assume a autoria do seu aprendizado.'; }
+  else if(overall >= 55){ nivel='Em Desenvolvimento'; nivelDesc='Você já tem boas intuições sobre o uso responsável da IA, mas ainda vale reforçar alguns hábitos de verificação e autonomia.'; }
+  else { nivel='Letramento Iniciante'; nivelDesc='Você está começando a perceber os riscos do uso não-crítico da IA nos estudos. Esse é um bom primeiro passo — vale revisar os pontos de atenção abaixo.'; }
+  return {scores, overall, nivel, nivelDesc};
+}
+
+function finalizarJogo(){
+  state.resultado = calcularResultado();
+  state.screen = 'resultado';
+  render();
+  window.scrollTo(0,0);
+}
+
+function energiaAtual(){
+  const all = state.answers.concat(state.quizAnswers);
+  if(!all.length) return null;
+  return Math.round(all.reduce((s,a)=>s+a.pontos,0)/all.length);
+}
+
+/* ---------- Envio / exportação de resultado ---------- */
+function buildPayload(){
+  return {
+    timestamp:new Date().toISOString(),
+    player:state.player,
+    scores:state.resultado.scores,
+    overall:state.resultado.overall,
+    nivel:state.resultado.nivel
+  };
+}
+
+function buildFormUrl(embed){
+  const p = buildPayload();
+  const e = GOOGLE_FORM.entries;
+  const params = new URLSearchParams();
+  params.set('usp','pp_url');
+  params.set(e.apelido, p.player.apelido || '(anônimo)');
+  params.set(e.perfil, p.player.perfil || '');
+  params.set(e.instituicao, p.player.instituicao || '');
+  params.set(e.overall, String(p.overall));
+  params.set(e.nivel, p.nivel);
+  params.set(e.fontes, String(p.scores.fontes));
+  params.set(e.autoria, String(p.scores.autoria));
+  params.set(e.dependencia, String(p.scores.dependencia));
+  params.set(e.vieses, String(p.scores.vieses));
+  params.set(e.privacidade, String(p.scores.privacidade));
+  if(embed) params.set('embedded','true');
+  return `https://docs.google.com/forms/d/e/${GOOGLE_FORM.formId}/viewform?${params.toString()}`;
+}
+
+function mostrarToast(msg){
+  state.toastMsg = msg;
+  render();
+  setTimeout(()=>{ state.toastMsg = null; render(); }, 2500);
+}
+
+function copiarResumo(){
+  const p = buildPayload();
+  const txt = 'IA Consciente — resultado\n' +
+    'Apelido: ' + (p.player.apelido || '(anônimo)') + '\n' +
+    'Perfil: ' + p.player.perfil + '\n' +
+    'Nível: ' + p.nivel + '\n' +
+    'Pontuação geral: ' + p.overall + '/100\n' +
+    'Verificação de Fontes: ' + p.scores.fontes + '%\n' +
+    'Autoria e Ética: ' + p.scores.autoria + '%\n' +
+    'Autonomia: ' + p.scores.dependencia + '%\n' +
+    'Vieses e Alucinações: ' + p.scores.vieses + '%\n' +
+    'Privacidade: ' + p.scores.privacidade + '%';
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=> mostrarToast('Resumo copiado!')).catch(()=> alert(txt));
+  } else {
+    alert(txt);
+  }
+}
+
+function baixarResultado(){
+  try{
+    const payload = buildPayload();
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'resultado-ia-consciente-' + Date.now() + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=> URL.revokeObjectURL(url), 1000);
+  }catch(e){
+    console.error(e);
+    alert('Não foi possível baixar automaticamente. Use "Copiar resumo" em vez disso.');
+  }
+}
+
+/* ---------- Componentes de UI ---------- */
+function header(diaLabel, faseLabel){
+  return `
+  <header class="top">
+    <div class="brand">
+      <div>
+        <div class="eyebrow">IA Consciente · G5</div>
+        <h1>Trilha até a Prova</h1>
+      </div>
+      ${diaLabel ? `<div class="countdown"><span class="num">${diaLabel}</span><span class="lbl">${faseLabel}</span></div>` : ''}
+    </div>
+  </header>`;
+}
+
+const TRAIL_ORDER = ['s0','s1','s2','s3','lab','s4','s5','s6','s7','det','quiz'];
+const TRAIL_LABELS = {s0:'1',s1:'2',s2:'3',s3:'4',lab:'LAB',s4:'5',s5:'6',s6:'7',s7:'8',det:'DET',quiz:'TESTE'};
+
+function trailPositionKey(){
+  switch(state.screen){
+    case 'scenario': return 's'+state.stepIndex;
+    case 'promptlab': return 'lab';
+    case 'transicao': return 's4';
+    case 'detective': return 'det';
+    case 'quiz': return 'quiz';
+    default: return null;
+  }
+}
+
+function trailHtml(){
+  const posKey = trailPositionKey();
+  if(!posKey) return '';
+  const curIdx = TRAIL_ORDER.indexOf(posKey);
+  const stones = TRAIL_ORDER.map((k,i)=>{
+    let cls = 'stone';
+    if(i < curIdx) cls += ' done';
+    else if(i === curIdx) cls += ' now';
+    return `<div class="${cls}">${TRAIL_LABELS[k]}</div>`;
+  }).join('');
+  return `<div class="trail">${stones}</div>`;
+}
+
+function meterHtml(){
+  const e = energiaAtual();
+  if(e === null) return '';
+  const cor = e >= 80 ? 'var(--teal)' : (e >= 55 ? 'var(--amber)' : 'var(--coral)');
+  return `
+  <div class="meter-wrap">
+    <div class="meter-lbl"><span>Energia crítica</span><span>${e}%</span></div>
+    <div class="meter-track"><div class="meter-fill" style="width:${e}%;background:${cor};"></div></div>
+  </div>`;
+}
+
+function toastHtml(){
+  return state.toastMsg ? `<div class="toast">${escapeHtml(state.toastMsg)}</div>` : '';
+}
+
+/* ---------- Telas ---------- */
+function screenIntro(){
+  return `
+  ${header(null,null)}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Um joguinho sobre IA nos estudos</div>
+      <h2>Bem-vindo(a) à trilha</h2>
+      <p>Este jogo foi criado pelo grupo de extensão <strong>IA Consciente (G5)</strong> da UFABC para conversar sobre um tema que já faz parte da rotina de quem estuda: o uso de ferramentas como ChatGPT, Gemini e Copilot na preparação para o vestibular, o ENEM, ou nas disciplinas da faculdade.</p>
+      <p>Ao longo do caminho você vai enfrentar situações reais de estudo, escrever seu próprio prompt numa oficina, bancar o(a) detetive contra respostas inventadas por IA e encarar um teste relâmpago contra o tempo. No final, você recebe seu <strong>perfil de letramento digital em IA</strong> e pode enviá-lo, se quiser, para a pesquisa do grupo.</p>
+      <p style="font-size:13px;color:var(--ink-soft);">Leva cerca de 10 a 12 minutos. Não existem respostas "de decoreba" — o jogo quer saber como você pensaria na prática.</p>
+      <button class="btn" onclick="irParaPerfil()">Começar minha trilha →</button>
+    </div>
+  </div>
+  <footer class="credit">G5 · IA Consciente — Práticas Extensionistas em Letramento Digital · UFABC</footer>
+  `;
+}
+
+function screenPerfil(){
+  return `
+  ${header(null,null)}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Antes de começar</div>
+      <h2>Um pouco sobre você</h2>
+      <p style="font-size:13.5px;">Essas informações ajudam o grupo a entender quem está jogando. Nenhum campo pede seu nome completo ou dado de identificação.</p>
+      <div class="field">
+        <label for="inp-apelido">Como quer ser chamado(a)? (opcional)</label>
+        <input type="text" id="inp-apelido" placeholder="Um apelido, ou deixe em branco" maxlength="30">
+      </div>
+      <div class="field">
+        <label for="inp-perfil">Qual seu momento de estudo hoje?</label>
+        <select id="inp-perfil">
+          <option value="">Selecione uma opção</option>
+          <option value="Cursinho popular / vestibular">Cursinho popular, me preparando para o vestibular</option>
+          <option value="ENEM sem cursinho">Estudando para o ENEM por conta própria</option>
+          <option value="Graduação / universidade">Já estou na graduação / universidade</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="inp-instituicao">Cursinho ou instituição (opcional)</label>
+        <input type="text" id="inp-instituicao" placeholder="Ex: nome do cursinho ou da universidade" maxlength="60">
+      </div>
+      <div class="consent">
+        <input type="checkbox" id="inp-consent" checked>
+        <label for="inp-consent">Autorizo o uso anônimo das minhas respostas pelo grupo <strong>IA Consciente (G5)</strong> para fins de pesquisa acadêmica sobre letramento digital, caso eu decida enviar meu resultado no final.</label>
+      </div>
+      <button class="btn" onclick="comecarTrilha()">Entrar na trilha →</button>
+    </div>
+  </div>
+  `;
+}
+
+function screenScenario(){
+  const c = SCENARIOS[state.stepIndex];
+  const faseLabel = c.fase === 1 ? 'até o vestibular' : 'até a prova final';
+  const answered = !!state.currentAnswer;
+  let optionsHtml = '';
+  const letters = ['A','B','C'];
+  
+  c.opcoes.forEach((op, i)=>{
+    if(answered){
+      if(i === state.currentAnswer.optIndex){
+        optionsHtml += `
+        <div class="opt" style="cursor:default; border-color:var(--ink); background:var(--paper-line);">
+          <span class="letter" style="background:var(--ink); color:var(--card);">${letters[i]}</span>
+          <span style="font-weight:600;">${escapeHtml(op.texto)}</span>
+        </div>`;
+      }
+    } else {
+      optionsHtml += `
+      <button class="opt" onclick="responder(${i})">
+        <span class="letter">${letters[i]}</span>
+        <span>${escapeHtml(op.texto)}</span>
+      </button>`;
+    }
+  });
+
+  let feedbackHtml = '';
+  if(answered){
+    const op = state.currentAnswer.opcao;
+    const badgeText = op.nivel === 'certo' ? '✓ Boa escolha' : (op.nivel === 'parcial' ? '◐ Dá para melhorar' : '✕ Vale reconsiderar');
+    const cat = CATS[c.categoria];
+    feedbackHtml = `
+    <div class="feedback ${op.nivel}">
+      <span class="badge">${badgeText}</span>
+      <p>${escapeHtml(op.feedback)}</p>
+      <span class="cat-tag ${cat.class}">${cat.label}</span>
+    </div>
+    <div class="row" style="margin-top:24px; justify-content:flex-end;">
+      <button class="btn" onclick="avancar()">Continuar →</button>
+    </div>`;
+  }
+
+  return `
+  ${header(c.dia, faseLabel)}
+  ${trailHtml()}
+  ${meterHtml()}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Cenário ${c.id} de 8 · Fase ${c.fase === 1 ? '1 — Cursinho' : '2 — Faculdade'}</div>
+      <h2>${escapeHtml(c.titulo)}</h2>
+      <p class="situacao">${escapeHtml(c.situacao)}</p>
+      ${c.ai ? `
+      <div class="ai-bubble">
+        <div class="ai-head"><span class="dotpulse"></span> IA — resposta simulada</div>
+        > ${escapeHtml(c.ai)}
+      </div>` : ''}
+      <div class="question">O que você faz?</div>
+      ${optionsHtml}
+      ${feedbackHtml}
+    </div>
+  </div>
+  `;
+}
+
+function screenPromptLab(){
+  const pl = state.promptLab;
+  let content;
+  if(!pl.submitted){
+    content = `
+    <p class="situacao">Antes de seguir pra faculdade, vamos treinar uma habilidade que vale ouro: escrever um prompt que ajuda você a aprender de verdade — não só ganhar uma resposta pronta.</p>
+    <p class="situacao">Imagine que você quer entender melhor <strong>efeito estufa</strong> pra prova. Escreva abaixo o prompt que você mandaria pra uma IA:</p>
+    <div class="field">
+      <textarea id="prompt-input" class="prompt-textarea" placeholder="Digite aqui o prompt que você mandaria..."></textarea>
+    </div>
+    <button class="btn" onclick="submeterPromptLab()">Analisar meu prompt →</button>
+    `;
+  } else {
+    const a = pl.analysis;
+    content = `
+    <div class="ai-bubble light">
+      <div class="ai-head">SEU PROMPT</div>
+      "${escapeHtml(pl.text)}"
+    </div>
+    <div class="question">Como seu prompt se saiu:</div>
+    <ul class="checklist">
+      <li class="${a.pedeExplicacao?'ok':'no'}">${a.pedeExplicacao?'✓':'✕'} Pede pra entender o processo, não só a resposta pronta</li>
+      <li class="${a.pedeFonte?'ok':'no'}">${a.pedeFonte?'✓':'✕'} Pede verificação ou fonte da informação</li>
+      <li class="${!a.respostaPronta?'ok':'no'}">${!a.respostaPronta?'✓':'✕'} Evita pedir um resultado 100% pronto pra copiar</li>
+    </ul>
+    <div class="tip"><strong>Prompt mais crítico, como exemplo:</strong> "Me explica como funciona o efeito estufa como se eu fosse te ensinar depois. Também me dá 2 fontes confiáveis pra eu confirmar essa explicação, e 3 perguntas pra eu testar se entendi de verdade."</div>
+    <div class="row" style="margin-top:24px; justify-content:flex-end;">
+      <button class="btn" onclick="continuarPromptLab()">Continuar →</button>
+    </div>
+    `;
+  }
+  return `
+  ${header(null,null)}
+  ${trailHtml()}
+  ${meterHtml()}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Oficina de Prompts</div>
+      <h2>Escreva um prompt melhor</h2>
+      ${content}
+    </div>
+  </div>
+  `;
+}
+
+function screenTransicao(){
+  return `
+  ${header('D-20','até a prova final')}
+  ${trailHtml()}
+  ${meterHtml()}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Alguns meses se passam</div>
+      <h2>Fase 2 — Agora na faculdade</h2>
+      <p class="situacao">Vestibular ou ENEM feito, você está começando (ou já cursando) a graduação. As ferramentas de IA continuam por perto — só que agora nos trabalhos, no TCC e nos grupos de estudo.</p>
+      <p class="situacao">As situações mudam, mas o desafio é o mesmo: usar a IA sem abrir mão do pensamento crítico.</p>
+      <div class="row" style="margin-top: 24px;">
+        <button class="btn" onclick="continuarFase2()">Continuar →</button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function screenDetective(){
+  const d = state.detective;
+  const sentencesHtml = DETECTIVE_SENTENCES.map((s,i)=>{
+    let cls = 'detective-sentence';
+    if(!d.submitted){
+      if(d.selected.has(i)) cls += ' selected';
+    } else {
+      const marcada = d.selected.has(i);
+      if(marcada && s.suspeita) cls += ' correct-flag';
+      else if(!marcada && !s.suspeita) cls += ' correct-clean';
+      else if(marcada && !s.suspeita) cls += ' false-alarm';
+      else cls += ' missed';
+    }
+    const clickAttr = d.submitted ? '' : `onclick="toggleSuspeita(${i})" onkeydown="handleSuspeitaKey(event, ${i})" tabindex="0"`;
+    return `<span class="${cls}" ${clickAttr} role="button">${escapeHtml(s.texto)}</span> `;
+  }).join('');
+
+  let resultHtml;
+  if(d.submitted){
+    const nivel = d.score >= 80 ? 'certo' : (d.score >= 50 ? 'parcial' : 'errado');
+    resultHtml = `
+    <div class="feedback ${nivel}">
+      <span class="badge">Sua taxa de acerto: ${d.score}%</span>
+      <p>As frases 3 e 5 eram inventadas: não existe essa estatística oficial sobre preferência pelo ENEM, e o "Instituto Nacional de Estudos" citado não existe de fato — o órgão responsável pelo exame é o INEP, e essa pesquisa específica sobre IA e nota de redação não corresponde a nenhuma fonte real.</p>
+    </div>
+    <div class="row" style="margin-top:24px; justify-content:flex-end;">
+      <button class="btn" onclick="continuarDetective()">Ir para o teste final →</button>
+    </div>`;
+  } else {
+    resultHtml = `
+    <div class="row" style="margin-top:24px;">
+      <button class="btn" onclick="conferirDetetive()">Conferir minhas escolhas</button>
+    </div>`;
+  }
+
+  return `
+  ${header(null,null)}
+  ${trailHtml()}
+  ${meterHtml()}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Detetive de Alucinação</div>
+      <h2>Quais frases parecem inventadas?</h2>
+      <p class="situacao">Este é um texto gerado por IA sobre o ENEM. Clique nas frases que parecem suspeitas — inventadas, exageradas ou sem fonte real. ${d.submitted ? '' : 'Marque quantas achar necessário.'}</p>
+      <div class="ai-bubble">
+        <div class="ai-head"><span class="dotpulse"></span> IA — resposta simulada</div>
+        ${sentencesHtml}
+      </div>
+      ${resultHtml}
+    </div>
+  </div>
+  `;
+}
+
+function screenQuiz(){
+  const item = QUIZ[state.quizIndex];
+  const answered = !!state.quizAnswer;
+  const timeLeft = state.quizTimeLeft;
+  const timerPct = Math.max(0, Math.round(timeLeft / QUIZ_TIME * 100));
+  const timerColor = timeLeft <= 5 ? 'var(--coral)' : 'var(--teal)';
+
+  let feedbackHtml = '';
+  if(answered){
+    const ok = state.quizAnswer.acertou;
+    const badgeText = state.quizAnswer.timeout ? '⏱ Tempo esgotado' : (ok ? '✓ Correto' : '✕ Não é bem assim');
+    feedbackHtml = `
+    <div class="feedback ${ok ? 'certo' : 'errado'}">
+      <span class="badge">${badgeText}</span>
+      <p>${state.quizAnswer.timeout ? 'A resposta correta era: <strong>' + (item.correta ? 'Verdadeiro' : 'Falso') + '</strong>. ' : ''}${escapeHtml(item.certoFb)}</p>
+    </div>
+    <div class="row" style="margin-top:24px; justify-content:flex-end;">
+      <button class="btn" onclick="avancarQuiz()">${state.quizIndex === QUIZ.length-1 ? 'Ver meu resultado →' : 'Próxima →'}</button>
+    </div>`;
+  }
+
+  return `
+  ${header(null,null)}
+  ${trailHtml()}
+  ${meterHtml()}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Quiz relâmpago · ${state.quizIndex+1} de ${QUIZ.length}</div>
+      <h2>Verdadeiro ou falso?</h2>
+      <p class="situacao">${escapeHtml(item.texto)}</p>
+      ${!answered ? `
+      <div class="row" style="margin-top:24px;">
+        <button class="btn" onclick="responderQuiz(true)">Verdadeiro</button>
+        <button class="btn secondary" onclick="responderQuiz(false)">Falso</button>
+      </div>
+      <div class="quiz-timerbar"><div class="quiz-timerfill" style="width:${timerPct}%; background:${timerColor};"></div></div>
+      <div class="timer-num">${timeLeft}s</div>
+      ` : ''}
+      ${feedbackHtml}
+    </div>
+  </div>
+  `;
+}
+
+function screenResultado(){
+  const r = state.resultado;
+  let barsHtml = '';
+  Object.keys(CATS).forEach(k=>{
+    const cat = CATS[k];
+    const val = r.scores[k];
+    barsHtml += `
+    <div class="bar-row">
+      <div class="bh"><span>${cat.label}</span><span>${val}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${val}%; background:${cat.color};"></div></div>
+      <div class="desc">${cat.desc}</div>
+    </div>`;
+  });
+
+  let tips = '';
+  Object.keys(CATS).forEach(k=>{
+    if(r.scores[k] < 70) tips += `<div class="tip"><strong>${CATS[k].label}:</strong> ${DICAS[k]}</div>`;
+  });
+  if(!tips) tips = `<div class="tip">Você não teve nenhum ponto de atenção forte — mandou bem em praticamente todas as frentes! Continue cultivando esse hábito de checagem.</div>`;
+
+  const badgesHtml = BADGES.map(b=>{
+    const val = r.scores[b.key];
+    const unlocked = val >= 85;
+    return `
+    <div class="badge-card ${unlocked?'unlocked':''}">
+      <div class="badge-title">${unlocked ? '★ ' : ''}${b.titulo}</div>
+      <div class="badge-desc">${unlocked ? b.desc : 'Alcance 85% em ' + CATS[b.key].label + ' para desbloquear (você está em ' + val + '%).'}</div>
+    </div>`;
+  }).join('');
+
+  let formSection;
+  if(formConfigurado()){
+    formSection = `
+    <h3 style="margin-top:40px;">Enviar resultado para a pesquisa</h3>
+    <p style="font-size:14px; color:var(--ink-soft);">Seu apelido, perfil e notas já vêm preenchidos no formulário abaixo. Enviar essas informações nos ajuda a entender melhor o letramento digital da nossa comunidade.</p>
+    <a class="btn" href="${buildFormUrl(false)}" target="_blank" rel="noopener" style="margin-bottom: 16px;">Abrir formulário e enviar →</a>
+    <div style="border-radius:16px; overflow:hidden; border:2px solid var(--paper-line); background: var(--paper);">
+      <iframe src="${buildFormUrl(true)}" width="100%" height="520" style="border:none; display:block;" loading="lazy">Carregando formulário... Se não aparecer, clique no botão acima.</iframe>
+    </div>
+    `;
+  } else {
+    formSection = `
+    <h3 style="margin-top:40px;">Enviar resultado para a pesquisa</h3>
+    <div class="tip">O formulário de coleta ainda não foi configurado neste jogo.</div>
+    `;
+  }
+
+  return `
+  ${header(null,null)}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Fim da trilha${state.player.apelido ? ' · ' + escapeHtml(state.player.apelido) : ''}</div>
+      <h2>Seu perfil de letramento digital em IA</h2>
+      <div class="stamp">${r.nivel}</div>
+      <div class="overall-num">Pontuação geral: ${r.overall}/100</div>
+      <p class="situacao">${r.nivelDesc}</p>
+
+      <h3 style="margin-top:40px;">Por área</h3>
+      ${barsHtml}
+
+      <h3 style="margin-top:40px;">Conquistas</h3>
+      <div class="badge-grid">${badgesHtml}</div>
+
+      <h3 style="margin-top:40px;">Pontos de atenção</h3>
+      ${tips}
+
+      ${state.player.consent ? formSection : `<h3 style="margin-top:40px;">Enviar resultado para a pesquisa</h3><div class="tip">Você optou por não compartilhar dados com a pesquisa. Pode ainda assim baixar ou copiar seu resultado abaixo.</div>`}
+
+      <div class="row" style="margin-top:32px;">
+        <button class="btn secondary" onclick="baixarResultado()">Baixar resultado (.json)</button>
+        <button class="link-btn" onclick="copiarResumo()">Copiar resumo em texto</button>
+      </div>
+
+      <div class="row" style="margin-top:32px; padding-top: 24px; border-top: 1px solid var(--paper-line);">
+        <button class="btn" onclick="resetGame()">Jogar novamente</button>
+      </div>
+    </div>
+  </div>
+  <footer class="credit">G5 · IA Consciente — Práticas Extensionistas em Letramento Digital · UFABC</footer>
+  `;
+}
+
+/* ---------- Render principal ---------- */
+function render(){
+  const app = document.getElementById('app');
+  let html = '';
+  switch(state.screen){
+    case 'intro': html = screenIntro(); break;
+    case 'perfil': html = screenPerfil(); break;
+    case 'scenario': html = screenScenario(); break;
+    case 'promptlab': html = screenPromptLab(); break;
+    case 'transicao': html = screenTransicao(); break;
+    case 'detective': html = screenDetective(); break;
+    case 'quiz': html = screenQuiz(); break;
+    case 'resultado': html = screenResultado(); break;
+    default: html = screenIntro();
+  }
+  html += toastHtml();
+  app.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
