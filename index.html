@@ -78,6 +78,15 @@
       to { opacity: 1; }
     }
 
+    @keyframes confetti-fall {
+      to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes censuraInk {
+      0% { background-position: 100% 0; }
+      100% { background-position: 0 0; }
+    }
+
     .spiral {
       height: 24px;
       background-image: repeating-radial-gradient(circle at 14px 12px, var(--paper) 0 4px, var(--card) 5px 20px);
@@ -103,7 +112,8 @@
     .btn.secondary:hover:not(:disabled) { background: var(--paper-line); box-shadow: none; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .btn:focus-visible, .opt:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .detective-sentence:focus-visible {
+    .btn:focus-visible, .opt:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, 
+    .detective-sentence:focus-visible, .privacy-word:focus-visible {
       outline: 3px solid var(--indigo); outline-offset: 2px;
     }
 
@@ -153,7 +163,8 @@
     
     .prompt-textarea {
       width: 100%; font-family: var(--font-mono); font-size: 14px; padding: 16px; line-height: 1.6;
-      border: 2px solid var(--paper-line); border-radius: 12px; background: var(--paper); color: var(--ink); resize: vertical; min-height: 120px; transition: border-color 0.2s;
+      border: 2px solid var(--paper-line); border-radius: 12px; background: var(--paper); color: var(--ink); 
+      resize: vertical; min-height: 120px; transition: border-color 0.2s;
     }
     .prompt-textarea:focus { border-color: var(--indigo); outline: none; background: var(--card); }
 
@@ -175,8 +186,14 @@
       font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
     }
     .ai-bubble.light .ai-head { color: var(--ink-soft); }
-    .ai-bubble .dotpulse { width: 8px; height: 8px; border-radius: 50%; background: #5EEAD4; display: inline-block; animation: pulse 1.5s ease-in-out infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+    .ai-bubble .dotpulse { 
+      width: 8px; height: 8px; border-radius: 50%; background: #5EEAD4; 
+      display: inline-block; animation: pulse 1.5s ease-in-out infinite; 
+    }
+    @keyframes pulse { 
+      0%, 100% { opacity: 0.4; transform: scale(0.8); } 
+      50% { opacity: 1; transform: scale(1.1); } 
+    }
 
     .question { font-weight: 700; margin: 28px 0 16px; font-family: var(--font-display); font-size: 18px; color: var(--ink); }
     
@@ -210,7 +227,8 @@
 
     .cat-tag {
       display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px;
-      padding: 6px 12px; border-radius: 999px; margin-top: 16px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 999px; margin-top: 16px; font-weight: 700; 
+      letter-spacing: 0.02em; text-transform: uppercase;
     }
     .cat-fontes { background: #CCFBF1; color: var(--teal); }
     .cat-autoria { background: #FEF3C7; color: var(--amber); }
@@ -218,7 +236,10 @@
     .cat-vieses { background: #FFE4E6; color: var(--coral); }
     .cat-privacidade { background: #E0E7FF; color: var(--indigo); }
 
-    .detective-sentence { cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: all 0.2s ease; display: inline; line-height: 2.2; }
+    .detective-sentence { 
+      cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: all 0.2s ease; 
+      display: inline; line-height: 2.2; 
+    }
     .detective-sentence:hover { background: rgba(255,255,255,0.15); }
     .detective-sentence.selected { background: rgba(245, 158, 11, 0.5); color: #fff; }
     .detective-sentence.correct-flag { background: rgba(15, 118, 110, 0.6); color: #fff; }
@@ -226,8 +247,110 @@
     .detective-sentence.false-alarm { background: rgba(190, 18, 60, 0.6); color: #fff; }
     .detective-sentence.missed { outline: 2px dashed #FDA4AF; outline-offset: 2px; }
 
+    .privacy-word {
+      cursor: pointer; 
+      padding: 2px 4px; 
+      margin: 1px 0;
+      border-radius: 4px; 
+      transition: all 0.3s ease; 
+      display: inline-block;
+      position: relative;
+      user-select: none;
+      line-height: 2.2;
+    }
+    .privacy-word:hover { 
+      background: var(--paper-line); 
+      transform: scale(1.02);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .privacy-word.censored {
+      background: var(--ink) !important;
+      color: var(--ink) !important;
+      cursor: pointer;
+      text-shadow: none;
+      background-image: linear-gradient(90deg, var(--ink) 0%, #2d3748 100%);
+      background-size: 200% 100%;
+      animation: censuraInk 0.4s ease-out;
+      transform: scale(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .privacy-word.censored:hover {
+      background: #2d3748 !important;
+      color: #2d3748 !important;
+      transform: scale(1);
+    }
+    .privacy-word.correct-hit {
+      background: rgba(15, 23, 42, 0.9);
+      color: rgba(15, 23, 42, 0.9);
+      text-decoration: line-through;
+      text-decoration-color: var(--teal);
+      text-decoration-thickness: 3px;
+    }
+    .privacy-word.correct-pass {
+      opacity: 0.6;
+      border-bottom: 2px solid var(--teal);
+    }
+    .privacy-word.wrong-censor {
+      background: var(--amber-bg);
+      color: var(--amber);
+      text-decoration: line-through;
+      text-decoration-color: var(--coral);
+    }
+    .privacy-word.missed-sensitive {
+      background: var(--coral-bg);
+      color: var(--coral);
+      font-weight: 700;
+      outline: 2px dashed var(--coral);
+      outline-offset: 2px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      padding: 12px;
+      background: var(--paper);
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid var(--paper-line);
+    }
+
+    .censor-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      margin-bottom: 16px;
+    }
+    .censor-counter .count {
+      background: var(--ink);
+      color: var(--card);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+
     .checklist { list-style: none; padding: 0; margin: 16px 0; }
-    .checklist li { padding: 12px 0; font-size: 15px; border-bottom: 1px solid var(--paper-line); display: flex; gap: 12px; align-items: flex-start; color: var(--ink); }
+    .checklist li { 
+      padding: 12px 0; font-size: 15px; border-bottom: 1px solid var(--paper-line); 
+      display: flex; gap: 12px; align-items: flex-start; color: var(--ink); 
+    }
     .checklist li:last-child { border-bottom: none; }
     .checklist li.ok { color: var(--teal); font-weight: 600; }
     .checklist li.no { color: var(--coral); font-weight: 600; }
@@ -239,7 +362,8 @@
     .stamp {
       display: inline-block; border: 4px solid var(--ink); border-radius: 16px; padding: 12px 24px;
       transform: rotate(-4deg); font-family: var(--font-display); font-weight: 700; font-size: 22px;
-      letter-spacing: 0.02em; margin: 12px 0 16px; color: var(--ink); box-shadow: 4px 4px 0px rgba(15, 23, 42, 0.1);
+      letter-spacing: 0.02em; margin: 12px 0 16px; color: var(--ink); 
+      box-shadow: 4px 4px 0px rgba(15, 23, 42, 0.1);
     }
     
     .overall-num { font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: var(--ink-soft); margin-bottom: 24px; }
@@ -256,8 +380,14 @@
     }
 
     .badge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0 32px; }
-    .badge-card { border: 2px solid var(--paper-line); border-radius: 16px; padding: 20px; background: var(--paper); transition: all 0.3s ease; }
-    .badge-card.unlocked { border-color: var(--teal); background: var(--teal-bg); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(15, 118, 110, 0.1); }
+    .badge-card { 
+      border: 2px solid var(--paper-line); border-radius: 16px; padding: 20px; 
+      background: var(--paper); transition: all 0.3s ease; 
+    }
+    .badge-card.unlocked { 
+      border-color: var(--teal); background: var(--teal-bg); 
+      transform: translateY(-4px); box-shadow: 0 8px 16px rgba(15, 118, 110, 0.1); 
+    }
     .badge-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin-bottom: 6px; color: var(--ink); }
     .badge-card:not(.unlocked) .badge-title { color: var(--ink-faint); }
     .badge-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
@@ -268,7 +398,57 @@
       box-shadow: 0 10px 25px rgba(0,0,0,.2); z-index: 50; animation: slideUp 0.3s ease-out;
     }
 
-    footer.credit { text-align: center; font-size: 12px; color: var(--ink-faint); margin-top: 40px; font-family: var(--font-mono); font-weight: 500; }
+    footer.credit { 
+      text-align: center; font-size: 12px; color: var(--ink-faint); 
+      margin-top: 40px; font-family: var(--font-mono); font-weight: 500; 
+    }
+
+    .lock-badge {
+      display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft);
+      background: var(--paper); border: 2px solid var(--paper-line); border-radius: 999px; 
+      padding: 6px 14px; margin-bottom: 16px;
+    }
+    .stamp-blurred { filter: blur(7px); user-select: none; pointer-events: none; }
+    .gate-cta {
+      background: var(--indigo-bg); border: 2px solid var(--indigo); border-radius: var(--radius);
+      padding: 24px; margin: 24px 0;
+    }
+    .gate-cta h3 { color: var(--indigo); margin-bottom: 8px; font-size: 17px; }
+    .gate-cta p { color: var(--ink); font-size: 14px; }
+
+    .pledge-box {
+      background: var(--amber-bg);
+      border: 2px solid var(--amber);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .pledge-box label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--ink);
+      cursor: pointer;
+      line-height: 1.5;
+    }
+    .pledge-box input[type="checkbox"] {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--amber);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .score-detail {
+      font-size: 12px;
+      color: var(--ink-soft);
+      font-family: var(--font-mono);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
@@ -276,26 +456,56 @@
 
 <script>
 /* =========================================================================
-   CONFIGURAÇÃO DO GOOGLE FORMS
+   CONFIGURAÇÃO DO GOOGLE FORMS (ATUALIZADO)
    ========================================================================= */
 const GOOGLE_FORM = {
-  formId: '1FAIpQLSdzCrVj_oROvfrkfkA2HaCpUIdXzQMMV2NzMVRwvtmAYlQ3-g',
+  formId: '1O1U-C082tcyBdYX5sjT3yqmXUG7_B3tJHQFQH_I5lvQ',
   entries: {
-    apelido:      'entry.2106692411',
-    perfil:       'entry.2045040280',
-    instituicao:  'entry.1583276075',
-    overall:      'entry.724800641',
-    nivel:        'entry.237531209',
-    fontes:       'entry.1566216450',
-    autoria:      'entry.1239779415',
-    dependencia:  'entry.32300032',
-    vieses:       'entry.1709206761',
-    privacidade:  'entry.52154918'
+    frequencia:   'entry.1156290625',
+    mudanca:      'entry.569277141',
+    areaMelhorar: 'entry.1703467099',
+    palavra:      'entry.620950635',
+    recomendacao: 'entry.1962962072'
   }
 };
 
 function formConfigurado(){
   return GOOGLE_FORM.formId && GOOGLE_FORM.formId.indexOf('SEU_FORM_ID') === -1;
+}
+
+/* =========================================================================
+   CANAL SILENCIOSO PARA A PLANILHA (Google Apps Script)
+   ========================================================================= */
+const SHEET_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbzRuLl8eCptJqbGNubwD6SQXK-u2jbuAasq2GAK5W40S04V1d9eTj_G8sI36S23DMubfg/exec';
+
+function sheetEndpointConfigurado(){
+  return SHEET_ENDPOINT_URL && SHEET_ENDPOINT_URL.indexOf('SEU_SCRIPT_ID_AQUI') === -1;
+}
+
+function enviarDadosSilenciosos(){
+  if(!sheetEndpointConfigurado()) return;
+  try{
+    const r = state.resultado;
+    const payload = {
+      timestamp: new Date().toISOString(),
+      perfil: state.player.perfil,
+      nivel: r.nivel,
+      overall: r.overall,
+      fontes: r.scores.fontes,
+      autoria: r.scores.autoria,
+      dependencia: r.scores.dependencia,
+      vieses: r.scores.vieses,
+      privacidade: r.scores.privacidade
+    };
+    fetch(SHEET_ENDPOINT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    }).catch(()=>{});
+  }catch(err){
+    console.error('Falha ao enviar dados silenciosos para a planilha:', err);
+  }
 }
 
 /* ---------- Dados do jogo ---------- */
@@ -460,6 +670,38 @@ const DETECTIVE_SENTENCES = [
   {texto:'O tema da redação é mantido em sigilo até o dia da prova, definido por uma comissão responsável pela banca examinadora.', suspeita:false}
 ];
 
+const CENSURA_PALAVRAS = [
+  {palavra:'Oi,', sensivel:false}, {palavra:'tudo', sensivel:false}, {palavra:'bem?', sensivel:false},
+  {palavra:'Pode', sensivel:false}, {palavra:'me', sensivel:false}, {palavra:'ajudar', sensivel:false},
+  {palavra:'a', sensivel:false}, {palavra:'entender', sensivel:false}, {palavra:'uma', sensivel:false},
+  {palavra:'parte', sensivel:false}, {palavra:'do', sensivel:false}, {palavra:'formulário', sensivel:false},
+  {palavra:'de', sensivel:false}, {palavra:'matrícula', sensivel:false}, {palavra:'da', sensivel:false},
+  {palavra:'faculdade.', sensivel:false},
+  {palavra:'Meu', sensivel:false}, {palavra:'nome', sensivel:false}, {palavra:'completo', sensivel:false},
+  {palavra:'é', sensivel:false}, {palavra:'Marcos', sensivel:true}, {palavra:'Eduardo', sensivel:true},
+  {palavra:'Silva', sensivel:true}, {palavra:'Pereira,', sensivel:true},
+  {palavra:'meu', sensivel:false}, {palavra:'CPF', sensivel:false}, {palavra:'é', sensivel:false},
+  {palavra:'123.456.789-00,', sensivel:true},
+  {palavra:'moro', sensivel:false}, {palavra:'na', sensivel:false}, {palavra:'Rua', sensivel:false},
+  {palavra:'das', sensivel:false}, {palavra:'Flores,', sensivel:true}, {palavra:'245,', sensivel:true},
+  {palavra:'apartamento', sensivel:false}, {palavra:'12,', sensivel:true}, {palavra:'Bairro', sensivel:false},
+  {palavra:'Jardim', sensivel:true}, {palavra:'América.', sensivel:true},
+  {palavra:'Meu', sensivel:false}, {palavra:'RA', sensivel:false}, {palavra:'na', sensivel:false},
+  {palavra:'faculdade', sensivel:false}, {palavra:'é', sensivel:false}, {palavra:'2024011234,', sensivel:true},
+  {palavra:'meu', sensivel:false}, {palavra:'telefone', sensivel:false}, {palavra:'para', sensivel:false},
+  {palavra:'contato', sensivel:false}, {palavra:'é', sensivel:false}, {palavra:'(11)', sensivel:true},
+  {palavra:'98765-4321.', sensivel:true},
+  {palavra:'A', sensivel:false}, {palavra:'pergunta', sensivel:false}, {palavra:'3', sensivel:false},
+  {palavra:'do', sensivel:false}, {palavra:'formulário', sensivel:false}, {palavra:'pede', sensivel:false},
+  {palavra:'o', sensivel:false}, {palavra:'"regime', sensivel:false}, {palavra:'de', sensivel:false},
+  {palavra:'dependência', sensivel:false}, {palavra:'administrativa"', sensivel:false},
+  {palavra:'—', sensivel:false}, {palavra:'o', sensivel:false}, {palavra:'que', sensivel:false},
+  {palavra:'isso', sensivel:false}, {palavra:'quer', sensivel:false}, {palavra:'dizer,', sensivel:false},
+  {palavra:'na', sensivel:false}, {palavra:'prática?', sensivel:false}
+];
+
+const CENSURA_EXPLICACAO = 'Nome completo, CPF, endereço, RA e telefone identificam e localizam você — e não eram necessários pra tirar essa dúvida específica sobre o formulário. Já "regime de dependência administrativa" é só um termo técnico do próprio formulário: soa estranho, mas não é dado pessoal, então não precisava ser censurado.';
+
 const QUIZ_TIME = 20;
 let quizTimerHandle = null;
 
@@ -467,17 +709,24 @@ let quizTimerHandle = null;
 function estadoInicial(){
   return {
     screen:'intro',
-    player:{apelido:'', perfil:'', instituicao:'', consent:true},
+    player:{perfil:'', consent:true},
     stepIndex:0,
     currentAnswer:null,
     answers:[],
     promptLab:{submitted:false, text:'', analysis:null},
-    detective:{selected:new Set(), submitted:false, score:0},
+    detective:{selected:new Set(), submitted:false, score:0, detail:''},
+    censura:{selected:new Set(), submitted:false, score:0, detail:''},
     quizIndex:0,
     quizAnswer:null,
     quizAnswers:[],
+    quizStreak:0,
     quizTimeLeft:QUIZ_TIME,
+    badgesUnlocked:new Set(),
+    toastQueue:[],
     resultado:null,
+    resultsRevealed:false,
+    formOpened:false,
+    pledgeConfirmed:false,
     toastMsg:null
   };
 }
@@ -486,6 +735,7 @@ let state = estadoInicial();
 function resetGame(){
   clearInterval(quizTimerHandle);
   quizTimerHandle = null;
+  toastBusy = false;
   state = estadoInicial();
   render();
   window.scrollTo(0,0);
@@ -499,12 +749,11 @@ function escapeHtml(str){
 function irParaPerfil(){ state.screen='perfil'; render(); window.scrollTo(0,0); }
 
 function comecarTrilha(){
-  const apelido = document.getElementById('inp-apelido').value.trim();
   const perfil = document.getElementById('inp-perfil').value;
-  const instituicao = document.getElementById('inp-instituicao').value.trim();
   const consent = document.getElementById('inp-consent').checked;
   if(!perfil){ alert('Escolha uma opção de perfil para continuar.'); return; }
-  state.player = {apelido, perfil, instituicao, consent};
+  if(!consent){ alert('É necessário concordar com os termos para continuar.'); return; }
+  state.player = {perfil, consent};
   state.screen='scenario';
   render();
   window.scrollTo(0,0);
@@ -516,6 +765,7 @@ function responder(optIndex){
   const opcao = cenario.opcoes[optIndex];
   state.currentAnswer = {optIndex, opcao};
   state.answers.push({scenarioId:cenario.id, categoria:cenario.categoria, pontos:opcao.pontos, nivel:opcao.nivel});
+  verificarConquistas();
   render();
 }
 
@@ -532,6 +782,63 @@ function avancar(){
 function continuarPromptLab(){ state.screen='transicao'; render(); window.scrollTo(0,0); }
 function continuarFase2(){ state.screen='scenario'; render(); window.scrollTo(0,0); }
 function continuarDetective(){
+  state.screen='censura';
+  render();
+  window.scrollTo(0,0);
+}
+
+/* ---------- Blindagem de Dados ---------- */
+window.toggleCensura = function(i){
+  if(state.censura.submitted) return;
+  const set = state.censura.selected;
+  if(set.has(i)) set.delete(i); else set.add(i);
+  render();
+};
+
+window.handleCensuraKey = function(event, i){
+  if(event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    toggleCensura(i);
+  }
+};
+
+function conferirCensura(){
+  const c = state.censura;
+  if(c.submitted) return;
+  if(c.selected.size === 0) return;
+  
+  const totalSensiveis = CENSURA_PALAVRAS.filter(p => p.sensivel).length;
+  const totalNaoSensiveis = CENSURA_PALAVRAS.filter(p => !p.sensivel).length;
+  
+  let acertosSensiveis = 0;
+  let acertosNaoSensiveis = 0;
+  let falsosPositivos = 0;
+  
+  CENSURA_PALAVRAS.forEach((p,i)=>{
+    const marcada = c.selected.has(i);
+    if(p.sensivel && marcada) acertosSensiveis++;
+    if(!p.sensivel && !marcada) acertosNaoSensiveis++;
+    if(!p.sensivel && marcada) falsosPositivos++;
+  });
+  
+  const notaSensiveis = totalSensiveis > 0 ? (acertosSensiveis / totalSensiveis) * 70 : 70;
+  const notaNaoSensiveis = totalNaoSensiveis > 0 ? (acertosNaoSensiveis / totalNaoSensiveis) * 30 : 30;
+  const penalidade = falsosPositivos * 2;
+  
+  let score = Math.round(notaSensiveis + notaNaoSensiveis - penalidade);
+  score = Math.max(0, Math.min(100, score));
+  
+  const detail = `Dados sensíveis localizados: ${acertosSensiveis}/${totalSensiveis} · Falsos positivos: ${falsosPositivos}`;
+  
+  c.submitted = true;
+  c.score = score;
+  c.detail = detail;
+  state.answers.push({scenarioId:'censura-privacidade', categoria:'privacidade', pontos:score});
+  verificarConquistas();
+  render();
+}
+
+function continuarCensura(){
   state.screen='quiz';
   state.quizIndex=0;
   startQuizTimer();
@@ -542,20 +849,66 @@ function continuarDetective(){
 /* ---------- Oficina de Prompts ---------- */
 function analisarPrompt(text){
   const t = text.toLowerCase();
-  const pedeExplicacao = /(explica|por que|porque|como funciona|passo a passo|me ajude a entender|entender melhor|raciocínio|racioc[ií]nio|processo)/.test(t);
-  const pedeFonte = /(fonte|refer[eê]ncia|confirma|confirme|verdade|correto|confi[aá]vel|de onde vem|comprova)/.test(t);
-  const respostaPronta = /(fa[çc]a( tudo)? pra mim|faz( tudo)? pra mim|escreve( tudo)? pronto|escreve a redação inteira|resolve tudo|me d[aá] a resposta|s[oó] (me )?d[aá] a resposta|copia e cola|texto pronto)/.test(t);
-  return {pedeExplicacao, pedeFonte, respostaPronta};
+  const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+  const pedeExplicacao = /(explica|explique|por que|porque|como funciona|passo a passo|me ajude a entender|entender melhor|racioc[ií]nio|processo|detalh|em profundidade)/.test(t);
+  const pedeFonte = /(fonte|refer[eê]ncia|confirma|confirme|verdade|correto|confi[aá]vel|de onde vem|comprova|cite|citar|baseado em|dados? reais?|estudo(s)? reais?)/.test(t);
+  const respostaPronta = /(fa[çc]a( tudo)? pra mim|faz( tudo)? pra mim|escreve( tudo)? pronto|escreve a reda[çc][ãa]o inteira|resolve tudo|me d[aá] a resposta( final)?|s[oó] (me )?d[aá] a resposta|copia e cola|texto pronto|resposta direta|responde s[oó]|me d[aá] logo)/.test(t);
+  const pedeTestar = /(teste|testar|pergunta(s)?( pra| para)? (eu|mim)|quiz|me pergunte|avalia(r)? se eu entendi|verificar se eu aprendi|me question)/.test(t);
+  const pedeEnsinar = /(ensinar|ensinasse|como se eu fosse (te )?ensinar|explicar pra algu[ée]m|repassar (pra|para) outra pessoa|resumo pra apresentar)/.test(t);
+  const pedeExemplo = /(exemplo|analogia|compara[çc][ãa]o|met[áa]fora|no dia a dia|pr[áa]tico|situa[çc][ãa]o real)/.test(t);
+  const soPerguntaCrua = wordCount <= 7 && !pedeExplicacao && !pedeFonte && !pedeTestar && !pedeEnsinar;
+  return {wordCount, pedeExplicacao, pedeFonte, respostaPronta, pedeTestar, pedeEnsinar, pedeExemplo, soPerguntaCrua};
+}
+
+function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+function pontuarPromptLab(a){
+  let dependencia = 45;
+  if(a.pedeExplicacao) dependencia += 25;
+  if(a.pedeTestar) dependencia += 20;
+  if(a.soPerguntaCrua) dependencia -= 25;
+  if(a.respostaPronta) dependencia -= 30;
+  dependencia = clamp(dependencia, 10, 100);
+  let fontes = 30;
+  if(a.pedeFonte) fontes += 55;
+  if(a.pedeExemplo) fontes += 10;
+  if(a.soPerguntaCrua) fontes -= 10;
+  fontes = clamp(fontes, 10, 100);
+  let autoria = 70;
+  if(a.respostaPronta) autoria = 15;
+  else if(a.pedeEnsinar) autoria = 100;
+  else if(a.pedeExplicacao) autoria = 85;
+  autoria = clamp(autoria, 10, 100);
+  return {dependencia, fontes, autoria};
+}
+
+function feedbackPromptLab(a){
+  const fortes = [];
+  const fracos = [];
+  if(a.pedeExplicacao) fortes.push('Pediu para entender o processo ou o "porquê", não só o resultado final.');
+  else fracos.push('Não pediu nenhuma explicação do raciocínio — só o resultado.');
+  if(a.pedeFonte) fortes.push('Pediu verificação, fonte ou confirmação da informação.');
+  else fracos.push('Não pediu nenhuma fonte ou forma de checar se a resposta está certa.');
+  if(!a.respostaPronta) fortes.push('Não pediu um texto 100% pronto pra copiar e colar.');
+  else fracos.push('Pediu um resultado pronto, do jeito que dá pra simplesmente copiar.');
+  if(a.pedeTestar) fortes.push('Pediu perguntas ou uma forma de testar se realmente aprendeu.');
+  if(a.pedeEnsinar) fortes.push('Pensou em explicar pra outra pessoa depois — ótimo sinal de que quer entender de verdade, não só decorar.');
+  if(a.pedeExemplo) fortes.push('Pediu exemplos ou situações práticas, o que ajuda a fixar o conteúdo.');
+  if(a.soPerguntaCrua) fracos.push('O prompt foi bem direto, sem nenhum pedido de explicação, fonte ou verificação — só a pergunta crua.');
+  return {fortes, fracos};
 }
 
 function submeterPromptLab(){
   const val = document.getElementById('prompt-input').value.trim();
   if(val.length < 15){ alert('Escreva um pouco mais — pelo menos uma frase completa.'); return; }
   const analysis = analisarPrompt(val);
-  state.promptLab = {text:val, submitted:true, analysis};
-  state.answers.push({scenarioId:'promptlab-explica', categoria:'dependencia', pontos: analysis.pedeExplicacao ? 100 : 35});
-  state.answers.push({scenarioId:'promptlab-fonte', categoria:'fontes', pontos: analysis.pedeFonte ? 100 : 35});
-  state.answers.push({scenarioId:'promptlab-autoria', categoria:'autoria', pontos: analysis.respostaPronta ? 25 : 100});
+  const pontos = pontuarPromptLab(analysis);
+  const feedback = feedbackPromptLab(analysis);
+  state.promptLab = {text:val, submitted:true, analysis, pontos, feedback};
+  state.answers.push({scenarioId:'promptlab-dependencia', categoria:'dependencia', pontos: pontos.dependencia});
+  state.answers.push({scenarioId:'promptlab-fonte', categoria:'fontes', pontos: pontos.fontes});
+  state.answers.push({scenarioId:'promptlab-autoria', categoria:'autoria', pontos: pontos.autoria});
+  verificarConquistas();
   render();
 }
 
@@ -576,16 +929,37 @@ window.handleSuspeitaKey = function(event, i){
 
 function conferirDetetive(){
   if(state.detective.submitted) return;
-  let acertos = 0;
+  if(state.detective.selected.size === 0) return;
+  
+  const totalSuspeitas = DETECTIVE_SENTENCES.filter(s => s.suspeita).length;
+  const totalNormais = DETECTIVE_SENTENCES.filter(s => !s.suspeita).length;
+  
+  let acertosSuspeitas = 0;
+  let acertosNormais = 0;
+  let falsosPositivos = 0;
+  
   DETECTIVE_SENTENCES.forEach((s,i)=>{
     const marcada = state.detective.selected.has(i);
-    if(marcada === s.suspeita) acertos++;
+    if(s.suspeita && marcada) acertosSuspeitas++;
+    if(!s.suspeita && !marcada) acertosNormais++;
+    if(!s.suspeita && marcada) falsosPositivos++;
   });
-  const score = Math.round(acertos / DETECTIVE_SENTENCES.length * 100);
+  
+  const notaSuspeitas = totalSuspeitas > 0 ? (acertosSuspeitas / totalSuspeitas) * 60 : 60;
+  const notaNormais = totalNormais > 0 ? (acertosNormais / totalNormais) * 40 : 40;
+  const penalidade = falsosPositivos * 5;
+  
+  let score = Math.round(notaSuspeitas + notaNormais - penalidade);
+  score = Math.max(0, Math.min(100, score));
+  
+  const detail = `Alucinações encontradas: ${acertosSuspeitas}/${totalSuspeitas} · Falsos alarmes: ${falsosPositivos}`;
+  
   state.detective.submitted = true;
   state.detective.score = score;
+  state.detective.detail = detail;
   state.answers.push({scenarioId:'detective-vieses', categoria:'vieses', pontos:score});
   state.answers.push({scenarioId:'detective-fontes', categoria:'fontes', pontos:score});
+  verificarConquistas();
   render();
 }
 
@@ -600,17 +974,31 @@ function startQuizTimer(){
       quizTimerHandle = null;
       if(!state.quizAnswer) quizTimeout();
     } else {
-      render();
+      updateQuizTimerDOM();
     }
   }, 1000);
 }
 function stopQuizTimer(){ clearInterval(quizTimerHandle); quizTimerHandle = null; }
+
+function updateQuizTimerDOM(){
+  const fill = document.getElementById('quiz-timerfill');
+  const num = document.getElementById('quiz-timernum');
+  if(!fill || !num) return;
+  const timeLeft = state.quizTimeLeft;
+  const timerPct = Math.max(0, Math.round(timeLeft / QUIZ_TIME * 100));
+  const timerColor = timeLeft <= 5 ? 'var(--coral)' : 'var(--teal)';
+  fill.style.width = timerPct + '%';
+  fill.style.background = timerColor;
+  num.textContent = timeLeft + 's';
+}
 
 function quizTimeout(){
   if(state.quizAnswer) return;
   const item = QUIZ[state.quizIndex];
   state.quizAnswer = {escolha:null, acertou:false, timeout:true};
   state.quizAnswers.push({categoria:item.categoria, pontos:15});
+  state.quizStreak = 0;
+  verificarConquistas();
   render();
 }
 
@@ -621,6 +1009,8 @@ function responderQuiz(escolha){
   const acertou = escolha === item.correta;
   state.quizAnswer = {escolha, acertou, timeout:false};
   state.quizAnswers.push({categoria:item.categoria, pontos: acertou ? 100 : 15});
+  state.quizStreak = acertou ? state.quizStreak + 1 : 0;
+  verificarConquistas();
   render();
 }
 
@@ -652,7 +1042,10 @@ function calcularResultado(){
 
 function finalizarJogo(){
   state.resultado = calcularResultado();
+  enviarDadosSilenciosos();
+  state.resultsRevealed = !formConfigurado();
   state.screen = 'resultado';
+  if(state.resultado.overall >= 80) dispararConfete();
   render();
   window.scrollTo(0,0);
 }
@@ -660,14 +1053,32 @@ function finalizarJogo(){
 function energiaAtual(){
   const all = state.answers.concat(state.quizAnswers);
   if(!all.length) return null;
-  return Math.round(all.reduce((s,a)=>s+a.pontos,0)/all.length);
+  
+  const porCategoria = {};
+  all.forEach(a => {
+    if(!porCategoria[a.categoria]) porCategoria[a.categoria] = [];
+    porCategoria[a.categoria].push(a.pontos);
+  });
+  
+  const mediasCategoria = Object.values(porCategoria).map(pontos => {
+    return Math.round(pontos.reduce((s,v) => s + v, 0) / pontos.length);
+  });
+  
+  const totalCategorias = Object.keys(CATS).length;
+  const categoriasPresentes = mediasCategoria.length;
+  const categoriasFaltantes = totalCategorias - categoriasPresentes;
+  
+  const somaMedias = mediasCategoria.reduce((s,v) => s + v, 0);
+  const pontosFaltantes = categoriasFaltantes * 50;
+  
+  return Math.round((somaMedias + pontosFaltantes) / totalCategorias);
 }
 
 /* ---------- Envio / exportação de resultado ---------- */
 function buildPayload(){
   return {
     timestamp:new Date().toISOString(),
-    player:state.player,
+    perfil:state.player.perfil,
     scores:state.resultado.scores,
     overall:state.resultado.overall,
     nivel:state.resultado.nivel
@@ -675,35 +1086,73 @@ function buildPayload(){
 }
 
 function buildFormUrl(embed){
-  const p = buildPayload();
-  const e = GOOGLE_FORM.entries;
   const params = new URLSearchParams();
-  params.set('usp','pp_url');
-  params.set(e.apelido, p.player.apelido || '(anônimo)');
-  params.set(e.perfil, p.player.perfil || '');
-  params.set(e.instituicao, p.player.instituicao || '');
-  params.set(e.overall, String(p.overall));
-  params.set(e.nivel, p.nivel);
-  params.set(e.fontes, String(p.scores.fontes));
-  params.set(e.autoria, String(p.scores.autoria));
-  params.set(e.dependencia, String(p.scores.dependencia));
-  params.set(e.vieses, String(p.scores.vieses));
-  params.set(e.privacidade, String(p.scores.privacidade));
   if(embed) params.set('embedded','true');
-  return `https://docs.google.com/forms/d/e/${GOOGLE_FORM.formId}/viewform?${params.toString()}`;
+  const qs = params.toString();
+  return `https://docs.google.com/forms/d/e/${GOOGLE_FORM.formId}/viewform${qs ? '?' + qs : ''}`;
 }
 
+let toastBusy = false;
 function mostrarToast(msg){
-  state.toastMsg = msg;
+  state.toastQueue.push(msg);
+  processarFilaToast();
+}
+function processarFilaToast(){
+  if(toastBusy) return;
+  const proximo = state.toastQueue.shift();
+  if(proximo === undefined) return;
+  toastBusy = true;
+  state.toastMsg = proximo;
   render();
-  setTimeout(()=>{ state.toastMsg = null; render(); }, 2500);
+  setTimeout(()=>{
+    state.toastMsg = null;
+    toastBusy = false;
+    render();
+    processarFilaToast();
+  }, 2400);
+}
+
+function dispararConfete(){
+  const cores = ['#0F766E','#B45309','#BE123C','#4338CA','#1E293B'];
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed; inset:0; pointer-events:none; z-index:999; overflow:hidden;';
+  for(let i=0;i<28;i++){
+    const p = document.createElement('span');
+    const cor = cores[i % cores.length];
+    p.style.cssText = `position:absolute; left:${Math.random()*100}vw; top:-16px; width:8px; height:14px;
+      background:${cor}; opacity:0.9; border-radius:2px; transform:rotate(${Math.random()*360}deg);
+      animation:confetti-fall ${1.6 + Math.random()*1.2}s ease-in forwards; animation-delay:${Math.random()*0.3}s;`;
+    container.appendChild(p);
+  }
+  document.body.appendChild(container);
+  setTimeout(()=> container.remove(), 3200);
+}
+
+/* ---------- Conquistas ---------- */
+function categoriaScoreProvisorio(categoria){
+  const pontos = [];
+  state.answers.forEach(a=>{ if(a.categoria === categoria) pontos.push(a.pontos); });
+  state.quizAnswers.forEach(a=>{ if(a.categoria === categoria) pontos.push(a.pontos); });
+  if(!pontos.length) return null;
+  return Math.round(pontos.reduce((s,v)=>s+v,0) / pontos.length);
+}
+
+function verificarConquistas(){
+  BADGES.forEach(b=>{
+    if(state.badgesUnlocked.has(b.key)) return;
+    const score = categoriaScoreProvisorio(b.key);
+    if(score !== null && score >= 85){
+      state.badgesUnlocked.add(b.key);
+      dispararConfete();
+      mostrarToast('🏅 Conquista desbloqueada: ' + b.titulo);
+    }
+  });
 }
 
 function copiarResumo(){
   const p = buildPayload();
   const txt = 'IA Consciente — resultado\n' +
-    'Apelido: ' + (p.player.apelido || '(anônimo)') + '\n' +
-    'Perfil: ' + p.player.perfil + '\n' +
+    'Perfil de estudo: ' + p.perfil + '\n' +
     'Nível: ' + p.nivel + '\n' +
     'Pontuação geral: ' + p.overall + '/100\n' +
     'Verificação de Fontes: ' + p.scores.fontes + '%\n' +
@@ -716,6 +1165,26 @@ function copiarResumo(){
   } else {
     alert(txt);
   }
+}
+
+/* ---------- Bloqueio de resultado / formulário ---------- */
+function abrirFormulario(){
+  state.formOpened = true;
+  window.open(buildFormUrl(false), '_blank', 'noopener');
+  render();
+}
+
+function togglePledge(){
+  state.pledgeConfirmed = !state.pledgeConfirmed;
+  render();
+}
+
+function revelarResultado(){
+  if(!state.pledgeConfirmed) return;
+  state.resultsRevealed = true;
+  dispararConfete();
+  render();
+  window.scrollTo(0,0);
 }
 
 function baixarResultado(){
@@ -747,8 +1216,8 @@ function header(diaLabel, faseLabel){
   </header>`;
 }
 
-const TRAIL_ORDER = ['s0','s1','s2','s3','lab','s4','s5','s6','s7','det','quiz'];
-const TRAIL_LABELS = {s0:'1',s1:'2',s2:'3',s3:'4',lab:'LAB',s4:'5',s5:'6',s6:'7',s7:'8',det:'DET',quiz:'TESTE'};
+const TRAIL_ORDER = ['s0','s1','s2','s3','lab','s4','s5','s6','s7','det','censura','quiz'];
+const TRAIL_LABELS = {s0:'1',s1:'2',s2:'3',s3:'4',lab:'LAB',s4:'5',s5:'6',s6:'7',s7:'8',det:'DET',censura:'BLIND',quiz:'TESTE'};
 
 function trailPositionKey(){
   switch(state.screen){
@@ -756,6 +1225,7 @@ function trailPositionKey(){
     case 'promptlab': return 'lab';
     case 'transicao': return 's4';
     case 'detective': return 'det';
+    case 'censura': return 'censura';
     case 'quiz': return 'quiz';
     default: return null;
   }
@@ -774,13 +1244,20 @@ function trailHtml(){
   return `<div class="trail">${stones}</div>`;
 }
 
+function mascoteAtual(e){
+  if(e >= 80) return {emoji:'🤓', frase:'Mandando muito bem!'};
+  if(e >= 55) return {emoji:'🙂', frase:'No caminho certo.'};
+  return {emoji:'😬', frase:'Presta atenção nos próximos!'};
+}
+
 function meterHtml(){
   const e = energiaAtual();
   if(e === null) return '';
   const cor = e >= 80 ? 'var(--teal)' : (e >= 55 ? 'var(--amber)' : 'var(--coral)');
+  const m = mascoteAtual(e);
   return `
   <div class="meter-wrap">
-    <div class="meter-lbl"><span>Energia crítica</span><span>${e}%</span></div>
+    <div class="meter-lbl"><span>${m.emoji} Energia crítica · <span style="font-weight:500;">${m.frase}</span></span><span>${e}%</span></div>
     <div class="meter-track"><div class="meter-fill" style="width:${e}%;background:${cor};"></div></div>
   </div>`;
 }
@@ -799,7 +1276,7 @@ function screenIntro(){
       <div class="eyebrow">Um joguinho sobre IA nos estudos</div>
       <h2>Bem-vindo(a) à trilha</h2>
       <p>Este jogo foi criado pelo grupo de extensão <strong>IA Consciente (G5)</strong> da UFABC para conversar sobre um tema que já faz parte da rotina de quem estuda: o uso de ferramentas como ChatGPT, Gemini e Copilot na preparação para o vestibular, o ENEM, ou nas disciplinas da faculdade.</p>
-      <p>Ao longo do caminho você vai enfrentar situações reais de estudo, escrever seu próprio prompt numa oficina, bancar o(a) detetive contra respostas inventadas por IA e encarar um teste relâmpago contra o tempo. No final, você recebe seu <strong>perfil de letramento digital em IA</strong> e pode enviá-lo, se quiser, para a pesquisa do grupo.</p>
+      <p>Ao longo do caminho você vai enfrentar situações reais de estudo, escrever seu próprio prompt numa oficina, bancar o(a) detetive contra respostas inventadas por IA, censurar dados sensíveis <strong>palavra por palavra</strong> antes de mandar uma mensagem pra uma IA, e encarar um teste relâmpago contra o tempo — com conquistas que vão sendo desbloqueadas pelo caminho. No final, você recebe seu <strong>perfil de letramento digital em IA</strong>.</p>
       <p style="font-size:13px;color:var(--ink-soft);">Leva cerca de 10 a 12 minutos. Não existem respostas "de decoreba" — o jogo quer saber como você pensaria na prática.</p>
       <button class="btn" onclick="irParaPerfil()">Começar minha trilha →</button>
     </div>
@@ -816,11 +1293,8 @@ function screenPerfil(){
     <div class="card-body">
       <div class="eyebrow">Antes de começar</div>
       <h2>Um pouco sobre você</h2>
-      <p style="font-size:13.5px;">Essas informações ajudam o grupo a entender quem está jogando. Nenhum campo pede seu nome completo ou dado de identificação.</p>
-      <div class="field">
-        <label for="inp-apelido">Como quer ser chamado(a)? (opcional)</label>
-        <input type="text" id="inp-apelido" placeholder="Um apelido, ou deixe em branco" maxlength="30">
-      </div>
+      <p style="font-size:13.5px;">Este jogo <strong>não pede nome, apelido, e-mail, CPF, instituição ou qualquer outro dado que possa te identificar</strong>. A única informação de contexto é a sua faixa de estudo, usada apenas de forma agregada.</p>
+      <p style="font-size:13.5px;">Ao final da trilha, pedimos que você preencha um <strong>formulário rápido e anônimo</strong> (30 segundos) para contribuir com a pesquisa do G5 sobre letramento digital em IA.</p>
       <div class="field">
         <label for="inp-perfil">Qual seu momento de estudo hoje?</label>
         <select id="inp-perfil">
@@ -831,13 +1305,9 @@ function screenPerfil(){
           <option value="Outro">Outro</option>
         </select>
       </div>
-      <div class="field">
-        <label for="inp-instituicao">Cursinho ou instituição (opcional)</label>
-        <input type="text" id="inp-instituicao" placeholder="Ex: nome do cursinho ou da universidade" maxlength="60">
-      </div>
       <div class="consent">
         <input type="checkbox" id="inp-consent" checked>
-        <label for="inp-consent">Autorizo o uso anônimo das minhas respostas pelo grupo <strong>IA Consciente (G5)</strong> para fins de pesquisa acadêmica sobre letramento digital, caso eu decida enviar meu resultado no final.</label>
+        <label for="inp-consent"><strong>Conforme a LGPD (Lei nº 13.709/2018):</strong> autorizo o uso anônimo e agregado da minha faixa de estudo e das minhas pontuações pelo grupo de extensão <strong>IA Consciente (G5)</strong>, exclusivamente para fins de pesquisa acadêmica sobre letramento digital.</label>
       </div>
       <button class="btn" onclick="comecarTrilha()">Entrar na trilha →</button>
     </div>
@@ -922,18 +1392,26 @@ function screenPromptLab(){
     <button class="btn" onclick="submeterPromptLab()">Analisar meu prompt →</button>
     `;
   } else {
-    const a = pl.analysis;
+    const media = Math.round((pl.pontos.dependencia + pl.pontos.fontes + pl.pontos.autoria) / 3);
+    const rotulo = media >= 80 ? 'Prompt afiado' : (media >= 55 ? 'No caminho certo' : 'Dá pra ir bem mais fundo');
+    const corFaixa = media >= 80 ? 'certo' : (media >= 55 ? 'parcial' : 'errado');
+    const fortesHtml = pl.feedback.fortes.length
+      ? pl.feedback.fortes.map(f => `<li class="ok">✓ ${escapeHtml(f)}</li>`).join('')
+      : '';
+    const fracosHtml = pl.feedback.fracos.length
+      ? pl.feedback.fracos.map(f => `<li class="no">✕ ${escapeHtml(f)}</li>`).join('')
+      : '';
     content = `
     <div class="ai-bubble light">
       <div class="ai-head">SEU PROMPT</div>
       "${escapeHtml(pl.text)}"
     </div>
-    <div class="question">Como seu prompt se saiu:</div>
-    <ul class="checklist">
-      <li class="${a.pedeExplicacao?'ok':'no'}">${a.pedeExplicacao?'✓':'✕'} Pede pra entender o processo, não só a resposta pronta</li>
-      <li class="${a.pedeFonte?'ok':'no'}">${a.pedeFonte?'✓':'✕'} Pede verificação ou fonte da informação</li>
-      <li class="${!a.respostaPronta?'ok':'no'}">${!a.respostaPronta?'✓':'✕'} Evita pedir um resultado 100% pronto pra copiar</li>
-    </ul>
+    <div class="feedback ${corFaixa}">
+      <span class="badge">${rotulo} · ${media}/100</span>
+      <p>${pl.feedback.fortes.length ? 'Isso já apareceu no seu prompt:' : 'Seu prompt ainda não tem esses elementos:'}</p>
+    </div>
+    ${fortesHtml ? `<div class="question" style="margin-bottom:8px;">O que já está bom</div><ul class="checklist">${fortesHtml}</ul>` : ''}
+    ${fracosHtml ? `<div class="question" style="margin-bottom:8px;">O que dá pra melhorar</div><ul class="checklist">${fracosHtml}</ul>` : ''}
     <div class="tip"><strong>Prompt mais crítico, como exemplo:</strong> "Me explica como funciona o efeito estufa como se eu fosse te ensinar depois. Também me dá 2 fontes confiáveis pra eu confirmar essa explicação, e 3 perguntas pra eu testar se entendi de verdade."</div>
     <div class="row" style="margin-top:24px; justify-content:flex-end;">
       <button class="btn" onclick="continuarPromptLab()">Continuar →</button>
@@ -999,15 +1477,17 @@ function screenDetective(){
     <div class="feedback ${nivel}">
       <span class="badge">Sua taxa de acerto: ${d.score}%</span>
       <p>As frases 3 e 5 eram inventadas: não existe essa estatística oficial sobre preferência pelo ENEM, e o "Instituto Nacional de Estudos" citado não existe de fato — o órgão responsável pelo exame é o INEP, e essa pesquisa específica sobre IA e nota de redação não corresponde a nenhuma fonte real.</p>
+      ${d.detail ? `<div class="score-detail">${d.detail}</div>` : ''}
     </div>
     <div class="row" style="margin-top:24px; justify-content:flex-end;">
-      <button class="btn" onclick="continuarDetective()">Ir para o teste final →</button>
+      <button class="btn" onclick="continuarDetective()">Ir para a blindagem de dados →</button>
     </div>`;
   } else {
     resultHtml = `
     <div class="row" style="margin-top:24px;">
-      <button class="btn" onclick="conferirDetetive()">Conferir minhas escolhas</button>
-    </div>`;
+      <button class="btn" ${d.selected.size === 0 ? 'disabled' : ''} onclick="conferirDetetive()">Conferir minhas escolhas</button>
+    </div>
+    ${d.selected.size === 0 ? '<p style="font-size:12.5px;color:var(--ink-soft);margin-top:12px;">Marque pelo menos uma frase suspeita antes de conferir.</p>' : ''}`;
   }
 
   return `
@@ -1030,6 +1510,76 @@ function screenDetective(){
   `;
 }
 
+function screenCensura(){
+  const c = state.censura;
+  const censoredCount = c.selected.size;
+  const totalSensiveis = CENSURA_PALAVRAS.filter(p => p.sensivel).length;
+
+  const palavrasHtml = CENSURA_PALAVRAS.map((p, i) => {
+    let cls = 'privacy-word';
+    if (!c.submitted) {
+      if (c.selected.has(i)) cls += ' censored';
+    } else {
+      const marcada = c.selected.has(i);
+      if (marcada && p.sensivel) cls += ' correct-hit';
+      else if (!marcada && !p.sensivel) cls += ' correct-pass';
+      else if (marcada && !p.sensivel) cls += ' wrong-censor';
+      else cls += ' missed-sensitive';
+    }
+    const clickAttr = c.submitted ? '' : `onclick="toggleCensura(${i})" onkeydown="handleCensuraKey(event, ${i})" tabindex="0"`;
+    return `<span class="${cls}" ${clickAttr} role="button">${escapeHtml(p.palavra)}</span>`;
+  }).join(' ');
+
+  let resultHtml;
+  if (c.submitted) {
+    const nivel = c.score >= 80 ? 'certo' : (c.score >= 50 ? 'parcial' : 'errado');
+    resultHtml = `
+    <div class="feedback ${nivel}">
+      <span class="badge">Sua taxa de acerto: ${c.score}%</span>
+      <p>${CENSURA_EXPLICACAO}</p>
+      ${c.detail ? `<div class="score-detail">${c.detail}</div>` : ''}
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-swatch" style="background:rgba(15,23,42,0.9);text-decoration:line-through;text-decoration-color:var(--teal);"></span> censurou certo</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:var(--coral-bg);outline:2px dashed var(--coral);"></span> faltou censurar</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:var(--amber-bg);text-decoration:line-through;"></span> censurou desnecessário</div>
+      <div class="legend-item"><span class="legend-swatch" style="border-bottom:2px solid var(--teal);"></span> manteve certo</div>
+    </div>
+    <div class="row" style="margin-top:24px; justify-content:flex-end;">
+      <button class="btn" onclick="continuarCensura()">Ir para o quiz final →</button>
+    </div>`;
+  } else {
+    resultHtml = `
+    <div class="censor-counter">
+      🖊️ Palavras censuradas: <span class="count">${censoredCount}</span>
+      ${censoredCount > 0 ? `<span style="font-size:12px;color:var(--ink-faint);">(clique para desfazer)</span>` : ''}
+    </div>
+    <div class="row" style="margin-top:24px;">
+      <button class="btn" ${c.selected.size === 0 ? 'disabled' : ''} onclick="conferirCensura()">Conferir minha blindagem</button>
+    </div>
+    ${c.selected.size === 0 ? '<p style="font-size:12.5px;color:var(--ink-soft);margin-top:12px;">Clique nas palavras que contêm dados pessoais sensíveis para censurá-las. Você pode clicar palavra por palavra!</p>' : 
+      '<p style="font-size:12.5px;color:var(--ink-soft);margin-top:12px;">Dica: há ' + totalSensiveis + ' palavras com dados sensíveis no total. Continue clicando!</p>'}`;
+  }
+
+  return `
+  ${header(null,null)}
+  ${trailHtml()}
+  ${meterHtml()}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Blindagem de Dados</div>
+      <h2>O que você censuraria antes de enviar?</h2>
+      <p class="situacao">Esta é uma mensagem que um(a) estudante está prestes a mandar pra uma IA. <strong>Clique palavra por palavra</strong> para censurar os dados pessoais sensíveis — como se você estivesse passando uma caneta preta por cima de cada informação que não deveria ser compartilhada. ${c.submitted ? '' : 'Você pode clicar quantas palavras quiser e desfazer clicando de novo.'}</p>
+      <div class="ai-bubble light" style="line-height: 2.4;">
+        ${palavrasHtml}
+      </div>
+      ${resultHtml}
+    </div>
+  </div>
+  `;
+}
+
 function screenQuiz(){
   const item = QUIZ[state.quizIndex];
   const answered = !!state.quizAnswer;
@@ -1041,9 +1591,10 @@ function screenQuiz(){
   if(answered){
     const ok = state.quizAnswer.acertou;
     const badgeText = state.quizAnswer.timeout ? '⏱ Tempo esgotado' : (ok ? '✓ Correto' : '✕ Não é bem assim');
+    const comboHtml = (ok && state.quizStreak >= 2) ? ` <span style="color:var(--amber);">🔥 combo x${state.quizStreak}</span>` : '';
     feedbackHtml = `
     <div class="feedback ${ok ? 'certo' : 'errado'}">
-      <span class="badge">${badgeText}</span>
+      <span class="badge">${badgeText}${comboHtml}</span>
       <p>${state.quizAnswer.timeout ? 'A resposta correta era: <strong>' + (item.correta ? 'Verdadeiro' : 'Falso') + '</strong>. ' : ''}${escapeHtml(item.certoFb)}</p>
     </div>
     <div class="row" style="margin-top:24px; justify-content:flex-end;">
@@ -1058,7 +1609,7 @@ function screenQuiz(){
   <div class="card">
     <div class="spiral"></div>
     <div class="card-body">
-      <div class="eyebrow">Quiz relâmpago · ${state.quizIndex+1} de ${QUIZ.length}</div>
+      <div class="eyebrow">Quiz relâmpago · ${state.quizIndex+1} de ${QUIZ.length}${state.quizStreak >= 2 ? ` · 🔥 combo x${state.quizStreak}` : ''}</div>
       <h2>Verdadeiro ou falso?</h2>
       <p class="situacao">${escapeHtml(item.texto)}</p>
       ${!answered ? `
@@ -1066,8 +1617,8 @@ function screenQuiz(){
         <button class="btn" onclick="responderQuiz(true)">Verdadeiro</button>
         <button class="btn secondary" onclick="responderQuiz(false)">Falso</button>
       </div>
-      <div class="quiz-timerbar"><div class="quiz-timerfill" style="width:${timerPct}%; background:${timerColor};"></div></div>
-      <div class="timer-num">${timeLeft}s</div>
+      <div class="quiz-timerbar"><div class="quiz-timerfill" id="quiz-timerfill" style="width:${timerPct}%; background:${timerColor};"></div></div>
+      <div class="timer-num" id="quiz-timernum">${timeLeft}s</div>
       ` : ''}
       ${feedbackHtml}
     </div>
@@ -1077,6 +1628,53 @@ function screenQuiz(){
 
 function screenResultado(){
   const r = state.resultado;
+  const gated = !state.resultsRevealed && formConfigurado();
+
+  if(gated){
+    return `
+    ${header(null,null)}
+    <div class="card">
+      <div class="spiral"></div>
+      <div class="card-body">
+        <div class="eyebrow">Fim da trilha</div>
+        <span class="lock-badge">🔒 resultado calculado</span>
+        <h2>Seu perfil de letramento digital em IA está pronto</h2>
+        <div class="stamp stamp-blurred">Nível: ??????</div>
+        <p class="situacao">A partir de tudo o que você respondeu, já calculamos sua pontuação geral nas 5 áreas: fontes, autoria, autonomia, vieses e privacidade.</p>
+
+        <div class="gate-cta">
+          <h3>📋 Contribua com a pesquisa do G5</h3>
+          <p>Preencha o formulário rápido e <strong>100% anônimo</strong> (30 segundos) para nos ajudar a entender como estudantes usam IA. Depois é só voltar aqui para ver seu resultado completo!</p>
+          
+          <button class="btn" onclick="abrirFormulario()" style="margin-bottom: 16px;">
+            ${state.formOpened ? '↗ Reabrir formulário da pesquisa' : '↗ Abrir formulário da pesquisa'}
+          </button>
+          
+          ${state.formOpened ? `
+            <div class="pledge-box">
+              <label>
+                <input type="checkbox" id="pledge-checkbox" ${state.pledgeConfirmed ? 'checked' : ''} onchange="togglePledge()">
+                <span><strong>Já preenchi o formulário.</strong> Pode liberar meu resultado!</span>
+              </label>
+            </div>
+            <button class="btn" 
+              ${state.pledgeConfirmed ? '' : 'disabled'} 
+              onclick="revelarResultado()"
+              style="margin-top: 8px;">
+              Revelar meu resultado
+            </button>
+            ${!state.pledgeConfirmed ? '<p style="font-size:12.5px;color:var(--ink-soft);margin:8px 0 0;">Marque a confirmação acima para liberar.</p>' : ''}
+          ` : `
+            <p style="font-size:12.5px;color:var(--ink-soft);margin:8px 0 0;">Abra o formulário, preencha as perguntas e volte aqui para liberar seu resultado.</p>
+          `}
+        </div>
+
+        <div class="tip"><strong>Por que pedimos isso?</strong> Em conformidade com a LGPD, esta trilha não coleta nenhum dado que te identifique. O formulário é totalmente anônimo e nos ajuda a entender o letramento digital da nossa comunidade.</div>
+      </div>
+    </div>
+    `;
+  }
+
   let barsHtml = '';
   Object.keys(CATS).forEach(k=>{
     const cat = CATS[k];
@@ -1097,7 +1695,7 @@ function screenResultado(){
 
   const badgesHtml = BADGES.map(b=>{
     const val = r.scores[b.key];
-    const unlocked = val >= 85;
+    const unlocked = val >= 85 || state.badgesUnlocked.has(b.key);
     return `
     <div class="badge-card ${unlocked?'unlocked':''}">
       <div class="badge-title">${unlocked ? '★ ' : ''}${b.titulo}</div>
@@ -1105,21 +1703,13 @@ function screenResultado(){
     </div>`;
   }).join('');
 
-  let formSection;
-  if(formConfigurado()){
-    formSection = `
-    <h3 style="margin-top:40px;">Enviar resultado para a pesquisa</h3>
-    <p style="font-size:14px; color:var(--ink-soft);">Seu apelido, perfil e notas já vêm preenchidos no formulário abaixo. Enviar essas informações nos ajuda a entender melhor o letramento digital da nossa comunidade.</p>
-    <a class="btn" href="${buildFormUrl(false)}" target="_blank" rel="noopener" style="margin-bottom: 16px;">Abrir formulário e enviar →</a>
-    <div style="border-radius:16px; overflow:hidden; border:2px solid var(--paper-line); background: var(--paper);">
-      <iframe src="${buildFormUrl(true)}" width="100%" height="520" style="border:none; display:block;" loading="lazy">Carregando formulário... Se não aparecer, clique no botão acima.</iframe>
-    </div>
-    `;
+  let formNote;
+  if(!formConfigurado()){
+    formNote = `<div class="tip">O formulário de coleta ainda não foi configurado neste jogo.</div>`;
   } else {
-    formSection = `
-    <h3 style="margin-top:40px;">Enviar resultado para a pesquisa</h3>
-    <div class="tip">O formulário de coleta ainda não foi configurado neste jogo.</div>
-    `;
+    formNote = state.formOpened
+      ? `<div class="tip">Obrigado(a) por contribuir com a pesquisa! Se ainda não enviou, o formulário continua disponível: <a href="${buildFormUrl(false)}" target="_blank" rel="noopener">abrir formulário</a>.</div>`
+      : `<div class="tip">Ajude a pesquisa do G5! Preencha o formulário anônimo: <a href="${buildFormUrl(false)}" target="_blank" rel="noopener">abrir formulário</a>.</div>`;
   }
 
   return `
@@ -1127,7 +1717,7 @@ function screenResultado(){
   <div class="card">
     <div class="spiral"></div>
     <div class="card-body">
-      <div class="eyebrow">Fim da trilha${state.player.apelido ? ' · ' + escapeHtml(state.player.apelido) : ''}</div>
+      <div class="eyebrow">Fim da trilha</div>
       <h2>Seu perfil de letramento digital em IA</h2>
       <div class="stamp">${r.nivel}</div>
       <div class="overall-num">Pontuação geral: ${r.overall}/100</div>
@@ -1142,7 +1732,8 @@ function screenResultado(){
       <h3 style="margin-top:40px;">Pontos de atenção</h3>
       ${tips}
 
-      ${state.player.consent ? formSection : `<h3 style="margin-top:40px;">Enviar resultado para a pesquisa</h3><div class="tip">Você optou por não compartilhar dados com a pesquisa. Pode ainda assim baixar ou copiar seu resultado abaixo.</div>`}
+      <h3 style="margin-top:40px;">Pesquisa do G5</h3>
+      ${formNote}
 
       <div class="row" style="margin-top:32px;">
         <button class="btn secondary" onclick="baixarResultado()">Baixar resultado (.json)</button>
@@ -1169,6 +1760,7 @@ function render(){
     case 'promptlab': html = screenPromptLab(); break;
     case 'transicao': html = screenTransicao(); break;
     case 'detective': html = screenDetective(); break;
+    case 'censura': html = screenCensura(); break;
     case 'quiz': html = screenQuiz(); break;
     case 'resultado': html = screenResultado(); break;
     default: html = screenIntro();
@@ -1176,6 +1768,11 @@ function render(){
   html += toastHtml();
   app.innerHTML = html;
 }
+
+// Expor funções globais
+window.togglePledge = togglePledge;
+window.abrirFormulario = abrirFormulario;
+window.revelarResultado = revelarResultado;
 
 render();
 </script>
