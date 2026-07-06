@@ -397,49 +397,11 @@
       padding: 12px 24px; border-radius: 999px; font-size: 14px; font-weight: 500; font-family: var(--font-mono);
       box-shadow: 0 10px 25px rgba(0,0,0,.2); z-index: 50; animation: slideUp 0.3s ease-out;
     }
+    .toast.warn { background: var(--coral); }
 
     footer.credit { 
       text-align: center; font-size: 12px; color: var(--ink-faint); 
       margin-top: 40px; font-family: var(--font-mono); font-weight: 500; 
-    }
-
-    .lock-badge {
-      display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px;
-      font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft);
-      background: var(--paper); border: 2px solid var(--paper-line); border-radius: 999px; 
-      padding: 6px 14px; margin-bottom: 16px;
-    }
-    .stamp-blurred { filter: blur(7px); user-select: none; pointer-events: none; }
-    .gate-cta {
-      background: var(--indigo-bg); border: 2px solid var(--indigo); border-radius: var(--radius);
-      padding: 24px; margin: 24px 0;
-    }
-    .gate-cta h3 { color: var(--indigo); margin-bottom: 8px; font-size: 17px; }
-    .gate-cta p { color: var(--ink); font-size: 14px; }
-
-    .pledge-box {
-      background: var(--amber-bg);
-      border: 2px solid var(--amber);
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 16px;
-    }
-    .pledge-box label {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 14px;
-      color: var(--ink);
-      cursor: pointer;
-      line-height: 1.5;
-    }
-    .pledge-box input[type="checkbox"] {
-      margin-top: 3px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--amber);
-      cursor: pointer;
-      flex-shrink: 0;
     }
 
     .score-detail {
@@ -456,56 +418,12 @@
 
 <script>
 /* =========================================================================
-   CONFIGURAÇÃO DO GOOGLE FORMS (ATUALIZADO)
+   CANAL PARA A PLANILHA (Google Apps Script)
    ========================================================================= */
-const GOOGLE_FORM = {
-  formId: '1O1U-C082tcyBdYX5sjT3yqmXUG7_B3tJHQFQH_I5lvQ',
-  entries: {
-    frequencia:   'entry.1156290625',
-    mudanca:      'entry.569277141',
-    areaMelhorar: 'entry.1703467099',
-    palavra:      'entry.620950635',
-    recomendacao: 'entry.1962962072'
-  }
-};
-
-function formConfigurado(){
-  return GOOGLE_FORM.formId && GOOGLE_FORM.formId.indexOf('SEU_FORM_ID') === -1;
-}
-
-/* =========================================================================
-   CANAL SILENCIOSO PARA A PLANILHA (Google Apps Script)
-   ========================================================================= */
-const SHEET_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbzRuLl8eCptJqbGNubwD6SQXK-u2jbuAasq2GAK5W40S04V1d9eTj_G8sI36S23DMubfg/exec';
+const SHEET_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbw37K7UPlPhorW_ZJgy9iCGZ8vzBfK6hO6-BccTVhBPhC-RdDRDEV1zDNSFKBZ6E0mnYw/exec';
 
 function sheetEndpointConfigurado(){
   return SHEET_ENDPOINT_URL && SHEET_ENDPOINT_URL.indexOf('SEU_SCRIPT_ID_AQUI') === -1;
-}
-
-function enviarDadosSilenciosos(){
-  if(!sheetEndpointConfigurado()) return;
-  try{
-    const r = state.resultado;
-    const payload = {
-      timestamp: new Date().toISOString(),
-      perfil: state.player.perfil,
-      nivel: r.nivel,
-      overall: r.overall,
-      fontes: r.scores.fontes,
-      autoria: r.scores.autoria,
-      dependencia: r.scores.dependencia,
-      vieses: r.scores.vieses,
-      privacidade: r.scores.privacidade
-    };
-    fetch(SHEET_ENDPOINT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'text/plain;charset=utf-8'},
-      body: JSON.stringify(payload)
-    }).catch(()=>{});
-  }catch(err){
-    console.error('Falha ao enviar dados silenciosos para a planilha:', err);
-  }
 }
 
 /* ---------- Dados do jogo ---------- */
@@ -700,7 +618,16 @@ const CENSURA_PALAVRAS = [
   {palavra:'na', sensivel:false}, {palavra:'prática?', sensivel:false}
 ];
 
-const CENSURA_EXPLICACAO = 'Nome completo, CPF, endereço, RA e telefone identificam e localizam você — e não eram necessários pra tirar essa dúvida específica sobre o formulário. Já "regime de dependência administrativa" é só um termo técnico do próprio formulário: soa estranho, mas não é dado pessoal, então não precisava ser censurado.';
+const CENSURA_TIERS = [
+  {min:85, texto:'Você censurou praticamente tudo que precisava e quase não sobrou nenhum falso positivo. Nome completo, CPF, endereço, RA e telefone identificam e localizam você — e não eram necessários pra essa dúvida específica sobre o formulário. Já "regime de dependência administrativa" é só um termo técnico do próprio formulário: soa estranho, mas não é dado pessoal.'},
+  {min:50, texto:'Você pegou boa parte dos dados sensíveis, mas ainda deixou passar (ou censurou a mais) alguns pontos. Vale reler a mensagem com calma: nome completo, CPF, endereço, RA e telefone identificam e localizam você, então são os que sempre merecem censura. Já "regime de dependência administrativa" é apenas um termo técnico do formulário, não um dado pessoal — não precisa censurar.'},
+  {min:0, texto:'Ainda faltou reconhecer boa parte dos dados sensíveis nessa mensagem. Nome completo, CPF, endereço, RA e telefone são exatamente o tipo de informação que identifica e localiza uma pessoa, e não eram necessários para tirar essa dúvida pontual sobre o formulário. Já "regime de dependência administrativa" é só um termo técnico do próprio formulário — soa estranho, mas não é dado pessoal.'}
+];
+
+function censuraExplicacao(score){
+  for(const tier of CENSURA_TIERS){ if(score >= tier.min) return tier.texto; }
+  return CENSURA_TIERS[CENSURA_TIERS.length-1].texto;
+}
 
 const QUIZ_TIME = 20;
 let quizTimerHandle = null;
@@ -724,10 +651,10 @@ function estadoInicial(){
     badgesUnlocked:new Set(),
     toastQueue:[],
     resultado:null,
-    resultsRevealed:false,
-    formOpened:false,
-    pledgeConfirmed:false,
-    toastMsg:null
+    feedback:{frequencia:'', mudanca:'', area:'', palavra:'', recomendacao:''},
+    toastMsg:null,
+    toastKind:'info',
+    envioStatus:null
   };
 }
 let state = estadoInicial();
@@ -833,6 +760,7 @@ function conferirCensura(){
   c.submitted = true;
   c.score = score;
   c.detail = detail;
+  c.explicacao = censuraExplicacao(score);
   state.answers.push({scenarioId:'censura-privacidade', categoria:'privacidade', pontos:score});
   verificarConquistas();
   render();
@@ -850,13 +778,13 @@ function continuarCensura(){
 function analisarPrompt(text){
   const t = text.toLowerCase();
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-  const pedeExplicacao = /(explica|explique|por que|porque|como funciona|passo a passo|me ajude a entender|entender melhor|racioc[ií]nio|processo|detalh|em profundidade)/.test(t);
-  const pedeFonte = /(fonte|refer[eê]ncia|confirma|confirme|verdade|correto|confi[aá]vel|de onde vem|comprova|cite|citar|baseado em|dados? reais?|estudo(s)? reais?)/.test(t);
-  const respostaPronta = /(fa[çc]a( tudo)? pra mim|faz( tudo)? pra mim|escreve( tudo)? pronto|escreve a reda[çc][ãa]o inteira|resolve tudo|me d[aá] a resposta( final)?|s[oó] (me )?d[aá] a resposta|copia e cola|texto pronto|resposta direta|responde s[oó]|me d[aá] logo)/.test(t);
-  const pedeTestar = /(teste|testar|pergunta(s)?( pra| para)? (eu|mim)|quiz|me pergunte|avalia(r)? se eu entendi|verificar se eu aprendi|me question)/.test(t);
-  const pedeEnsinar = /(ensinar|ensinasse|como se eu fosse (te )?ensinar|explicar pra algu[ée]m|repassar (pra|para) outra pessoa|resumo pra apresentar)/.test(t);
-  const pedeExemplo = /(exemplo|analogia|compara[çc][ãa]o|met[áa]fora|no dia a dia|pr[áa]tico|situa[çc][ãa]o real)/.test(t);
-  const soPerguntaCrua = wordCount <= 7 && !pedeExplicacao && !pedeFonte && !pedeTestar && !pedeEnsinar;
+  const pedeExplicacao = /(explica|explique|por que|porque|como funciona|como surgiu|como se forma|passo a passo|me ajude a entender|entender melhor|racioc[ií]nio|processo|detalh|em profundidade|causas?( e consequ[eê]ncias)?|origem|mecanismo)/.test(t);
+  const pedeFonte = /(fonte|refer[eê]ncia|confirma|confirme|verdade|correto|confi[aá]vel|de onde vem|comprova|cite|citar|baseado em|dados? reais?|estudo(s)? reais?|link(s)?|artigo(s)? cient[ií]fico|de onde tirou|s[ei]te oficial|onde posso conferir|checar( isso)?|verificar( isso)?)/.test(t);
+  const respostaPronta = /(fa[çc]a( tudo)? pra mim|faz( tudo)? pra mim|escreve( tudo)? pronto|escreve a reda[çc][ãa]o inteira|resolve tudo|me d[aá] a resposta( final)?|s[oó] (me )?d[aá] a resposta|copia e cola|texto pronto|resposta direta|responde s[oó]|me d[aá] logo|manda pronto|j[aá] pronto pra entregar|escreve por mim|faz o trabalho (todo )?por mim)/.test(t);
+  const pedeTestar = /(teste|testar|pergunta(s)?( pra| para)? (eu|mim)|quiz|me pergunte|avalia(r)? se eu entendi|verificar se eu aprendi|me question|exerc[ií]cios? pra (eu )?praticar|me d[aá] exerc[ií]cios)/.test(t);
+  const pedeEnsinar = /(ensinar|ensinasse|como se eu fosse (te )?ensinar|explicar pra algu[ée]m|repassar (pra|para) outra pessoa|resumo pra apresentar|de um jeito simples|em linguagem simples|como se eu tivesse (\d+ )?anos)/.test(t);
+  const pedeExemplo = /(exemplo|analogia|compara[çc][ãa]o|met[áa]fora|no dia a dia|pr[áa]tico|situa[çc][ãa]o real|imagina que|na pr[áa]tica)/.test(t);
+  const soPerguntaCrua = wordCount <= 6 && !pedeExplicacao && !pedeFonte && !pedeTestar && !pedeEnsinar && !pedeExemplo;
   return {wordCount, pedeExplicacao, pedeFonte, respostaPronta, pedeTestar, pedeEnsinar, pedeExemplo, soPerguntaCrua};
 }
 
@@ -1042,10 +970,7 @@ function calcularResultado(){
 
 function finalizarJogo(){
   state.resultado = calcularResultado();
-  enviarDadosSilenciosos();
-  state.resultsRevealed = !formConfigurado();
-  state.screen = 'resultado';
-  if(state.resultado.overall >= 80) dispararConfete();
+  state.screen = 'feedback';
   render();
   window.scrollTo(0,0);
 }
@@ -1074,7 +999,76 @@ function energiaAtual(){
   return Math.round((somaMedias + pontosFaltantes) / totalCategorias);
 }
 
-/* ---------- Envio / exportação de resultado ---------- */
+/* ---------- Envio para planilha ---------- */
+function enviarDadosCompletos(){
+  if(!sheetEndpointConfigurado()){
+    state.envioStatus = 'not-configured';
+    return;
+  }
+  state.envioStatus = 'sending';
+  try{
+    const r = state.resultado;
+    const f = state.feedback;
+    const payload = {
+      timestamp: new Date().toISOString(),
+      perfil: state.player.perfil,
+      nivel: r.nivel,
+      overall: r.overall,
+      fontes: r.scores.fontes,
+      autoria: r.scores.autoria,
+      dependencia: r.scores.dependencia,
+      vieses: r.scores.vieses,
+      privacidade: r.scores.privacidade,
+      frequencia: f.frequencia,
+      mudanca: f.mudanca,
+      area: f.area,
+      palavra: f.palavra,
+      recomendacao: f.recomendacao
+    };
+    // mode:'no-cors' significa que nunca saberemos com certeza se o Apps Script
+    // processou com sucesso (a resposta vem opaca). Por isso, tratamos qualquer
+    // falha de rede como aviso visível ao invés de engolir o erro silenciosamente.
+    fetch(SHEET_ENDPOINT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    }).then(()=>{
+      state.envioStatus = 'sent';
+    }).catch((err)=>{
+      console.error('Falha ao enviar dados para a planilha:', err);
+      state.envioStatus = 'failed';
+      mostrarToast('⚠️ Não deu pra registrar seu resultado na pesquisa (sem conexão?). Seu resultado abaixo continua válido.', 'warn');
+      render();
+    });
+  }catch(err){
+    console.error('Falha ao enviar dados para a planilha:', err);
+    state.envioStatus = 'failed';
+    mostrarToast('⚠️ Não deu pra registrar seu resultado na pesquisa. Seu resultado abaixo continua válido.', 'warn');
+  }
+}
+
+function enviarFeedbackERevelar(){
+  const frequencia = document.getElementById('fb-frequencia').value;
+  const mudanca = document.getElementById('fb-mudanca').value;
+  const area = document.getElementById('fb-area').value;
+  const palavra = document.getElementById('fb-palavra').value.trim();
+  const recomendacao = document.getElementById('fb-recomendacao').value;
+
+  if(!frequencia || !mudanca || !area || !recomendacao){
+    alert('Responda todas as perguntas obrigatórias para continuar.');
+    return;
+  }
+
+  state.feedback = {frequencia, mudanca, area, palavra, recomendacao};
+  enviarDadosCompletos();
+  dispararConfete();
+  state.screen = 'resultado';
+  render();
+  window.scrollTo(0,0);
+}
+
+/* ---------- Exportação de resultado ---------- */
 function buildPayload(){
   return {
     timestamp:new Date().toISOString(),
@@ -1085,16 +1079,9 @@ function buildPayload(){
   };
 }
 
-function buildFormUrl(embed){
-  const params = new URLSearchParams();
-  if(embed) params.set('embedded','true');
-  const qs = params.toString();
-  return `https://docs.google.com/forms/d/e/${GOOGLE_FORM.formId}/viewform${qs ? '?' + qs : ''}`;
-}
-
 let toastBusy = false;
-function mostrarToast(msg){
-  state.toastQueue.push(msg);
+function mostrarToast(msg, kind){
+  state.toastQueue.push({msg, kind: kind || 'info'});
   processarFilaToast();
 }
 function processarFilaToast(){
@@ -1102,14 +1089,16 @@ function processarFilaToast(){
   const proximo = state.toastQueue.shift();
   if(proximo === undefined) return;
   toastBusy = true;
-  state.toastMsg = proximo;
+  state.toastMsg = proximo.msg;
+  state.toastKind = proximo.kind;
   render();
+  const duracao = proximo.kind === 'warn' ? 4200 : 2400;
   setTimeout(()=>{
     state.toastMsg = null;
     toastBusy = false;
     render();
     processarFilaToast();
-  }, 2400);
+  }, duracao);
 }
 
 function dispararConfete(){
@@ -1151,6 +1140,7 @@ function verificarConquistas(){
 
 function copiarResumo(){
   const p = buildPayload();
+  const f = state.feedback;
   const txt = 'IA Consciente — resultado\n' +
     'Perfil de estudo: ' + p.perfil + '\n' +
     'Nível: ' + p.nivel + '\n' +
@@ -1159,7 +1149,12 @@ function copiarResumo(){
     'Autoria e Ética: ' + p.scores.autoria + '%\n' +
     'Autonomia: ' + p.scores.dependencia + '%\n' +
     'Vieses e Alucinações: ' + p.scores.vieses + '%\n' +
-    'Privacidade: ' + p.scores.privacidade + '%';
+    'Privacidade: ' + p.scores.privacidade + '%\n' +
+    'Frequência de uso: ' + f.frequencia + '\n' +
+    'Mudou forma de pensar: ' + f.mudanca + '\n' +
+    'Área a melhorar: ' + f.area + '\n' +
+    'Palavra: ' + f.palavra + '\n' +
+    'Recomendaria: ' + f.recomendacao;
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt).then(()=> mostrarToast('Resumo copiado!')).catch(()=> alert(txt));
   } else {
@@ -1167,29 +1162,10 @@ function copiarResumo(){
   }
 }
 
-/* ---------- Bloqueio de resultado / formulário ---------- */
-function abrirFormulario(){
-  state.formOpened = true;
-  window.open(buildFormUrl(false), '_blank', 'noopener');
-  render();
-}
-
-function togglePledge(){
-  state.pledgeConfirmed = !state.pledgeConfirmed;
-  render();
-}
-
-function revelarResultado(){
-  if(!state.pledgeConfirmed) return;
-  state.resultsRevealed = true;
-  dispararConfete();
-  render();
-  window.scrollTo(0,0);
-}
-
 function baixarResultado(){
   try{
     const payload = buildPayload();
+    payload.feedback = state.feedback;
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1200,6 +1176,11 @@ function baixarResultado(){
     console.error(e);
     alert('Não foi possível baixar automaticamente. Use "Copiar resumo" em vez disso.');
   }
+}
+
+function tentarReenviar(){
+  mostrarToast('Tentando reenviar seu resultado...');
+  enviarDadosCompletos();
 }
 
 /* ---------- Componentes de UI ---------- */
@@ -1263,7 +1244,9 @@ function meterHtml(){
 }
 
 function toastHtml(){
-  return state.toastMsg ? `<div class="toast">${escapeHtml(state.toastMsg)}</div>` : '';
+  if(!state.toastMsg) return '';
+  const cls = state.toastKind === 'warn' ? 'toast warn' : 'toast';
+  return `<div class="${cls}">${escapeHtml(state.toastMsg)}</div>`;
 }
 
 /* ---------- Telas ---------- */
@@ -1294,7 +1277,7 @@ function screenPerfil(){
       <div class="eyebrow">Antes de começar</div>
       <h2>Um pouco sobre você</h2>
       <p style="font-size:13.5px;">Este jogo <strong>não pede nome, apelido, e-mail, CPF, instituição ou qualquer outro dado que possa te identificar</strong>. A única informação de contexto é a sua faixa de estudo, usada apenas de forma agregada.</p>
-      <p style="font-size:13.5px;">Ao final da trilha, pedimos que você preencha um <strong>formulário rápido e anônimo</strong> (30 segundos) para contribuir com a pesquisa do G5 sobre letramento digital em IA.</p>
+      <p style="font-size:13.5px;">Ao final, você responde 5 perguntas rápidas (30 segundos) e já vê seu resultado — tudo dentro do jogo, sem formulários externos.</p>
       <div class="field">
         <label for="inp-perfil">Qual seu momento de estudo hoje?</label>
         <select id="inp-perfil">
@@ -1536,7 +1519,7 @@ function screenCensura(){
     resultHtml = `
     <div class="feedback ${nivel}">
       <span class="badge">Sua taxa de acerto: ${c.score}%</span>
-      <p>${CENSURA_EXPLICACAO}</p>
+      <p>${escapeHtml(c.explicacao || censuraExplicacao(c.score))}</p>
       ${c.detail ? `<div class="score-detail">${c.detail}</div>` : ''}
     </div>
     <div class="legend">
@@ -1598,7 +1581,7 @@ function screenQuiz(){
       <p>${state.quizAnswer.timeout ? 'A resposta correta era: <strong>' + (item.correta ? 'Verdadeiro' : 'Falso') + '</strong>. ' : ''}${escapeHtml(item.certoFb)}</p>
     </div>
     <div class="row" style="margin-top:24px; justify-content:flex-end;">
-      <button class="btn" onclick="avancarQuiz()">${state.quizIndex === QUIZ.length-1 ? 'Ver meu resultado →' : 'Próxima →'}</button>
+      <button class="btn" onclick="avancarQuiz()">${state.quizIndex === QUIZ.length-1 ? 'Responder perguntas da pesquisa →' : 'Próxima →'}</button>
     </div>`;
   }
 
@@ -1626,54 +1609,76 @@ function screenQuiz(){
   `;
 }
 
+function screenFeedback(){
+  return `
+  ${header(null,null)}
+  <div class="card">
+    <div class="spiral"></div>
+    <div class="card-body">
+      <div class="eyebrow">Quase lá!</div>
+      <h2>Ajude a pesquisa do G5</h2>
+      <p class="situacao">Responda rapidinho (30 segundos) — suas respostas são <strong>100% anônimas</strong> e ajudam a entender como estudantes usam IA:</p>
+
+      <div class="field">
+        <label for="fb-frequencia">1. Com que frequência você usa IA nos estudos?</label>
+        <select id="fb-frequencia">
+          <option value="">Selecione...</option>
+          <option value="Todo dia">Todo dia</option>
+          <option value="Algumas vezes por semana">Algumas vezes por semana</option>
+          <option value="Raramente">Raramente</option>
+          <option value="Nunca usei">Nunca usei</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fb-mudanca">2. Esse jogo mudou sua forma de pensar sobre IA nos estudos?</label>
+        <select id="fb-mudanca">
+          <option value="">Selecione...</option>
+          <option value="Sim, bastante">Sim, bastante</option>
+          <option value="Um pouco">Um pouco</option>
+          <option value="Não mudou nada">Não mudou nada</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fb-area">3. Qual área você acha que mais precisa melhorar?</label>
+        <select id="fb-area">
+          <option value="">Selecione...</option>
+          <option value="Verificação de fontes">Verificar fontes e dados</option>
+          <option value="Autoria e ética">Autoria e ética acadêmica</option>
+          <option value="Autonomia nos estudos">Autonomia nos estudos</option>
+          <option value="Vieses e alucinações">Identificar vieses e alucinações</option>
+          <option value="Privacidade digital">Privacidade e segurança</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fb-palavra">4. Uma palavra que define o que você aprendeu: (opcional)</label>
+        <input type="text" id="fb-palavra" placeholder="Ex: verificar, desconfiar, autonomia..." maxlength="30">
+      </div>
+
+      <div class="field">
+        <label for="fb-recomendacao">5. Você recomendaria este jogo?</label>
+        <select id="fb-recomendacao">
+          <option value="">Selecione...</option>
+          <option value="Sim, com certeza">Sim, com certeza!</option>
+          <option value="Sim, talvez">Sim, talvez</option>
+          <option value="Não">Não</option>
+        </select>
+      </div>
+
+      <p style="font-size:12px;color:var(--ink-faint);margin-top:16px;">Respostas 100% anônimas, conforme a LGPD. Nenhum dado pessoal é coletado.</p>
+
+      <button class="btn" onclick="enviarFeedbackERevelar()" style="margin-top:16px;">
+        Enviar e ver meu resultado →
+      </button>
+    </div>
+  </div>
+  `;
+}
+
 function screenResultado(){
   const r = state.resultado;
-  const gated = !state.resultsRevealed && formConfigurado();
-
-  if(gated){
-    return `
-    ${header(null,null)}
-    <div class="card">
-      <div class="spiral"></div>
-      <div class="card-body">
-        <div class="eyebrow">Fim da trilha</div>
-        <span class="lock-badge">🔒 resultado calculado</span>
-        <h2>Seu perfil de letramento digital em IA está pronto</h2>
-        <div class="stamp stamp-blurred">Nível: ??????</div>
-        <p class="situacao">A partir de tudo o que você respondeu, já calculamos sua pontuação geral nas 5 áreas: fontes, autoria, autonomia, vieses e privacidade.</p>
-
-        <div class="gate-cta">
-          <h3>📋 Contribua com a pesquisa do G5</h3>
-          <p>Preencha o formulário rápido e <strong>100% anônimo</strong> (30 segundos) para nos ajudar a entender como estudantes usam IA. Depois é só voltar aqui para ver seu resultado completo!</p>
-          
-          <button class="btn" onclick="abrirFormulario()" style="margin-bottom: 16px;">
-            ${state.formOpened ? '↗ Reabrir formulário da pesquisa' : '↗ Abrir formulário da pesquisa'}
-          </button>
-          
-          ${state.formOpened ? `
-            <div class="pledge-box">
-              <label>
-                <input type="checkbox" id="pledge-checkbox" ${state.pledgeConfirmed ? 'checked' : ''} onchange="togglePledge()">
-                <span><strong>Já preenchi o formulário.</strong> Pode liberar meu resultado!</span>
-              </label>
-            </div>
-            <button class="btn" 
-              ${state.pledgeConfirmed ? '' : 'disabled'} 
-              onclick="revelarResultado()"
-              style="margin-top: 8px;">
-              Revelar meu resultado
-            </button>
-            ${!state.pledgeConfirmed ? '<p style="font-size:12.5px;color:var(--ink-soft);margin:8px 0 0;">Marque a confirmação acima para liberar.</p>' : ''}
-          ` : `
-            <p style="font-size:12.5px;color:var(--ink-soft);margin:8px 0 0;">Abra o formulário, preencha as perguntas e volte aqui para liberar seu resultado.</p>
-          `}
-        </div>
-
-        <div class="tip"><strong>Por que pedimos isso?</strong> Em conformidade com a LGPD, esta trilha não coleta nenhum dado que te identifique. O formulário é totalmente anônimo e nos ajuda a entender o letramento digital da nossa comunidade.</div>
-      </div>
-    </div>
-    `;
-  }
 
   let barsHtml = '';
   Object.keys(CATS).forEach(k=>{
@@ -1703,13 +1708,16 @@ function screenResultado(){
     </div>`;
   }).join('');
 
-  let formNote;
-  if(!formConfigurado()){
-    formNote = `<div class="tip">O formulário de coleta ainda não foi configurado neste jogo.</div>`;
+  let envioHtml = '';
+  if(state.envioStatus === 'failed' || state.envioStatus === 'not-configured'){
+    envioHtml = `
+    <div class="feedback errado" style="margin-top:32px;">
+      <span class="badge">⚠️ Registro na pesquisa não confirmado</span>
+      <p>Seu resultado abaixo está correto e é só seu — mas não conseguimos confirmar o envio para a planilha da pesquisa do G5${state.envioStatus === 'not-configured' ? ' (endpoint não configurado)' : ' (falha de conexão)'}. Você pode tentar reenviar ou baixar/copiar seu resultado como garantia.</p>
+      ${state.envioStatus === 'failed' ? '<div class="row" style="margin-top:16px;"><button class="btn secondary" onclick="tentarReenviar()">Tentar reenviar</button></div>' : ''}
+    </div>`;
   } else {
-    formNote = state.formOpened
-      ? `<div class="tip">Obrigado(a) por contribuir com a pesquisa! Se ainda não enviou, o formulário continua disponível: <a href="${buildFormUrl(false)}" target="_blank" rel="noopener">abrir formulário</a>.</div>`
-      : `<div class="tip">Ajude a pesquisa do G5! Preencha o formulário anônimo: <a href="${buildFormUrl(false)}" target="_blank" rel="noopener">abrir formulário</a>.</div>`;
+    envioHtml = `<div class="tip" style="margin-top:32px;">Obrigado(a) por contribuir com a pesquisa do G5! Suas respostas já foram registradas de forma anônima.</div>`;
   }
 
   return `
@@ -1732,8 +1740,7 @@ function screenResultado(){
       <h3 style="margin-top:40px;">Pontos de atenção</h3>
       ${tips}
 
-      <h3 style="margin-top:40px;">Pesquisa do G5</h3>
-      ${formNote}
+      ${envioHtml}
 
       <div class="row" style="margin-top:32px;">
         <button class="btn secondary" onclick="baixarResultado()">Baixar resultado (.json)</button>
@@ -1762,17 +1769,13 @@ function render(){
     case 'detective': html = screenDetective(); break;
     case 'censura': html = screenCensura(); break;
     case 'quiz': html = screenQuiz(); break;
+    case 'feedback': html = screenFeedback(); break;
     case 'resultado': html = screenResultado(); break;
     default: html = screenIntro();
   }
   html += toastHtml();
   app.innerHTML = html;
 }
-
-// Expor funções globais
-window.togglePledge = togglePledge;
-window.abrirFormulario = abrirFormulario;
-window.revelarResultado = revelarResultado;
 
 render();
 </script>
