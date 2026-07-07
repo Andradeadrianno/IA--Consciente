@@ -7,6 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     :root {
       --ink: #0F172A;
@@ -426,6 +429,18 @@ function sheetEndpointConfigurado(){
   return SHEET_ENDPOINT_URL && SHEET_ENDPOINT_URL.indexOf('SEU_SCRIPT_ID_AQUI') === -1;
 }
 
+/* ---------- Helper para Data Local ---------- */
+function obterDataHoraLocal() {
+  const data = new Date();
+  const dia = String(data.getDate()).padStart(2, '0');
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const ano = data.getFullYear();
+  const horas = String(data.getHours()).padStart(2, '0');
+  const minutos = String(data.getMinutes()).padStart(2, '0');
+  const segundos = String(data.getSeconds()).padStart(2, '0');
+  return `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
+}
+
 /* ---------- Dados do jogo ---------- */
 const CATS = {
   fontes:      {label:'Verificação de Fontes',         desc:'Checar se dados, citações e referências indicadas pela IA realmente existem e procedem.', class:'cat-fontes', color:'var(--teal)'},
@@ -458,7 +473,7 @@ const SCENARIOS = [
     ai:'Claro! É só aplicar X = V0 · sen(2θ) ÷ g² e você chega direto na resposta exata, sem precisar dos passos intermediários.',
     categoria:'vieses',
     opcoes:[
-      {texto:'Uso a fórmula sem questionar — ela respondeu com tanta confiança que deve estar certa.', nivel:'errado', pontos:15,
+      {texto:'Uso a fórmula sem questionar — ela respondeu com tanta confiança que deve estar certa.', nivel:'errado', pontos:0,
        feedback:'Confiança no tom de resposta não é garantia de que a informação está correta. Ferramentas de IA generativa podem "alucinar" fórmulas e dados que parecem plausíveis, mas não existem — e isso pode custar caro numa questão de prova.'},
       {texto:'Ignoro essa resposta e decido nunca mais usar IA para estudar.', nivel:'parcial', pontos:55,
        feedback:'Evitar a ferramenta por completo também não resolve: o desafio não é "usar ou não usar", e sim desenvolver o hábito de checar. Rejeitar tudo tira a chance de aproveitar o que a IA pode oferecer de bom quando bem usada.'},
@@ -472,8 +487,8 @@ const SCENARIOS = [
     ai:'Aqui está sua redação completa, com introdução, desenvolvimento e conclusão, pronta para ser entregue.',
     categoria:'autoria',
     opcoes:[
-      {texto:'Copio e entrego exatamente como a IA escreveu, sem alterar nada.', nivel:'errado', pontos:15,
-       feedback:'Entregar um texto gerado por IA como se fosse seu compromete sua autoria e pode ser identificado como cópia. Além disso, você perde a chance de treinar justamente a habilidade que a prova avalia: sua própria argumentação.'},
+      {texto:'Uso o texto da IA, mas troco alguns sinônimos e mudo a ordem dos parágrafos para o professor ou o sistema anti-plágio não perceberem.', nivel:'errado', pontos:-10,
+       feedback:'Mascarar o texto trocando sinônimos não muda o fato de que a estrutura e as ideias originais não são suas. Isso fere a integridade acadêmica do mesmo jeito — pontuação negativa aplicada.'},
       {texto:'Uso o texto da IA como base, mas reescrevo boa parte com minhas próprias palavras.', nivel:'parcial', pontos:55,
        feedback:'É um passo melhor, mas ainda deixa a estrutura de pensamento por conta da IA. O ideal é que as ideias centrais e os argumentos também sejam construídos por você.'},
       {texto:'Peço à IA só sugestões de repertório e ideias, e escrevo a redação inteira com minhas próprias palavras.', nivel:'certo', pontos:100,
@@ -486,8 +501,8 @@ const SCENARIOS = [
     ai:'Aqui está a resolução completa da questão, passo a passo.',
     categoria:'dependencia',
     opcoes:[
-      {texto:'Continuo fazendo isso — economizo tempo e já tenho a resposta certa.', nivel:'errado', pontos:15,
-       feedback:'Copiar sem entender economiza tempo agora, mas custa caro depois: na prova, sem IA disponível, o raciocínio que faltou treinar vai fazer falta.'},
+      {texto:'Peço para a IA resolver e até leio o passo a passo, mas acabo só copiando a resposta final pro caderno para entregar logo.', nivel:'errado', pontos:0,
+       feedback:'Ler o passo a passo sem tentar fazer sozinho dá uma falsa sensação de aprendizado. Na prova, sem a IA, a falta de prática real vai cobrar o preço.'},
       {texto:'Tento resolver sozinho(a) primeiro, e só uso a IA se travar, para entender onde errei.', nivel:'certo', pontos:100,
        feedback:'Esse é o uso que constrói autonomia: você treina o raciocínio e usa a IA como um tutor pontual, não como quem resolve por você.'},
       {texto:'Paro de usar IA de vez para exercícios, mesmo quando travo de verdade.', nivel:'parcial', pontos:60,
@@ -500,7 +515,7 @@ const SCENARIOS = [
     ai:'Segundo dados do IBGE, um percentual expressivo dos estudantes de baixa renda não conclui o ensino médio na idade esperada.',
     categoria:'fontes',
     opcoes:[
-      {texto:'Uso o dado direto na redação, confiando que a IA pesquisou certinho.', nivel:'errado', pontos:15,
+      {texto:'Uso o dado direto na redação, confiando que a IA pesquisou certinho.', nivel:'errado', pontos:0,
        feedback:'A IA pode inventar números e atribuí-los a instituições reais de forma bastante convincente. Usar um dado inventado na redação pode derrubar a credibilidade do texto todo.'},
       {texto:'Busco confirmar se esse dado do IBGE realmente existe antes de usar.', nivel:'certo', pontos:100,
        feedback:'Exatamente esse é o hábito que protege você: verificar a fonte original antes de usar qualquer dado como repertório, seja na redação, seja em um trabalho.'},
@@ -514,7 +529,7 @@ const SCENARIOS = [
     ai:'SILVA, J. Inteligência artificial e educação superior. Revista Brasileira de Pesquisa Educacional, v. 12, n. 3, p. 45-62, 2023.',
     categoria:'vieses',
     opcoes:[
-      {texto:'Coloco a referência direto nas minhas citações, confiando no formato correto.', nivel:'errado', pontos:15,
+      {texto:'Coloco a referência direto nas minhas citações, confiando no formato correto.', nivel:'errado', pontos:0,
        feedback:'Ferramentas de IA generativa são conhecidas por "alucinar" referências que têm formato perfeito, mas simplesmente não existem. Em um trabalho acadêmico, isso é um erro grave — e pode ser interpretado como má conduta.'},
       {texto:'Busco o artigo em bases acadêmicas (Google Acadêmico, SciELO, periódicos) para confirmar que ele existe.', nivel:'certo', pontos:100,
        feedback:'Correto. Toda referência sugerida por IA precisa ser conferida em uma base confiável antes de entrar em um trabalho acadêmico.'},
@@ -528,7 +543,7 @@ const SCENARIOS = [
     ai:'Entendido, com esses dados posso te ajudar a preencher o formulário corretamente.',
     categoria:'privacidade',
     opcoes:[
-      {texto:'Colo todos os dados normalmente, já que é só para a IA me ajudar.', nivel:'errado', pontos:15,
+      {texto:'Colo todos os dados normalmente, já que é só para a IA me ajudar.', nivel:'errado', pontos:0,
        feedback:'Dados pessoais sensíveis (CPF, endereço, RA) não deveriam ser compartilhados com ferramentas de IA sem necessidade real. Eles podem ficar armazenados ou expostos de formas que você não controla.'},
       {texto:'Uso a IA só para entender as partes confusas do formulário, sem digitar meus dados reais.', nivel:'certo', pontos:100,
        feedback:'Essa é a prática mais segura: pedir ajuda com o "como fazer", sem entregar dados sensíveis que não são necessários para isso.'},
@@ -542,8 +557,8 @@ const SCENARIOS = [
     ai:null,
     categoria:'autoria',
     opcoes:[
-      {texto:'Não falo nada — não é da minha conta o que ele faz na parte dele.', nivel:'errado', pontos:15,
-       feedback:'Mesmo não sendo seu texto, um uso não declarado de IA pode violar a política da disciplina e prejudicar o grupo inteiro se for identificado. Em um trabalho coletivo, a integridade acadêmica também é coletiva.'},
+      {texto:'Reescrevo a parte dele com minhas palavras para não dar problema de plágio, mas não falo nada com ele para evitar conflito.', nivel:'errado', pontos:0,
+       feedback:'Você assume o trabalho duplo e não resolve o problema ético do grupo. Em trabalhos coletivos, a transparência e o alinhamento das regras são essenciais.'},
       {texto:'Converso com ele e sugiro que o grupo declare o uso de IA conforme as regras da disciplina, revisando o conteúdo juntos.', nivel:'certo', pontos:100,
        feedback:'Essa é a atitude mais responsável: transparência sobre o uso de IA e revisão coletiva protegem o grupo inteiro e respeitam as normas da disciplina.'},
       {texto:'Aviso o professor diretamente, sem conversar antes com o colega.', nivel:'parcial', pontos:55,
@@ -604,6 +619,9 @@ const CENSURA_PALAVRAS = [
   {palavra:'das', sensivel:false}, {palavra:'Flores,', sensivel:true}, {palavra:'245,', sensivel:true},
   {palavra:'apartamento', sensivel:false}, {palavra:'12,', sensivel:true}, {palavra:'Bairro', sensivel:false},
   {palavra:'Jardim', sensivel:true}, {palavra:'América.', sensivel:true},
+  {palavra:'Ah,', sensivel:false}, {palavra:'e', sensivel:false}, {palavra:'eu', sensivel:false},
+  {palavra:'estava', sensivel:false}, {palavra:'internado', sensivel:true}, {palavra:'com', sensivel:true},
+  {palavra:'dengue.', sensivel:true},
   {palavra:'Meu', sensivel:false}, {palavra:'RA', sensivel:false}, {palavra:'na', sensivel:false},
   {palavra:'faculdade', sensivel:false}, {palavra:'é', sensivel:false}, {palavra:'2024011234,', sensivel:true},
   {palavra:'meu', sensivel:false}, {palavra:'telefone', sensivel:false}, {palavra:'para', sensivel:false},
@@ -619,9 +637,9 @@ const CENSURA_PALAVRAS = [
 ];
 
 const CENSURA_TIERS = [
-  {min:85, texto:'Você censurou praticamente tudo que precisava e quase não sobrou nenhum falso positivo. Nome completo, CPF, endereço, RA e telefone identificam e localizam você — e não eram necessários pra essa dúvida específica sobre o formulário. Já "regime de dependência administrativa" é só um termo técnico do próprio formulário: soa estranho, mas não é dado pessoal.'},
-  {min:50, texto:'Você pegou boa parte dos dados sensíveis, mas ainda deixou passar (ou censurou a mais) alguns pontos. Vale reler a mensagem com calma: nome completo, CPF, endereço, RA e telefone identificam e localizam você, então são os que sempre merecem censura. Já "regime de dependência administrativa" é apenas um termo técnico do formulário, não um dado pessoal — não precisa censurar.'},
-  {min:0, texto:'Ainda faltou reconhecer boa parte dos dados sensíveis nessa mensagem. Nome completo, CPF, endereço, RA e telefone são exatamente o tipo de informação que identifica e localiza uma pessoa, e não eram necessários para tirar essa dúvida pontual sobre o formulário. Já "regime de dependência administrativa" é só um termo técnico do próprio formulário — soa estranho, mas não é dado pessoal.'}
+  {min:85, texto:'Você censurou praticamente tudo que precisava e quase não sobrou nenhum falso positivo. Nome completo, CPF, endereço, saúde (internado com dengue), RA e telefone são dados que não eram necessários pra essa dúvida. Já "regime de dependência administrativa" é só um termo técnico: soa estranho, mas não é dado pessoal.'},
+  {min:50, texto:'Você pegou boa parte dos dados sensíveis, mas ainda deixou passar (ou censurou a mais) alguns pontos. Vale reler a mensagem com calma: nome, CPF, endereço, saúde, RA e telefone são dados que exigem censura. Já "regime de dependência administrativa" é apenas um termo técnico do formulário, não precisa censurar.'},
+  {min:0, texto:'Ainda faltou reconhecer boa parte dos dados sensíveis nessa mensagem. Nome completo, CPF, endereço, dados de saúde, RA e telefone não eram necessários para tirar essa dúvida pontual sobre o formulário. Já "regime de dependência administrativa" é só um termo técnico do próprio formulário — soa estranho, mas não é dado pessoal.'}
 ];
 
 function censuraExplicacao(score){
@@ -640,6 +658,8 @@ function estadoInicial(){
     stepIndex:0,
     currentAnswer:null,
     answers:[],
+    scenarioStreak:0, 
+    quizTimePenalty:0,
     promptLab:{submitted:false, text:'', analysis:null},
     detective:{selected:new Set(), submitted:false, score:0, detail:''},
     censura:{selected:new Set(), submitted:false, score:0, detail:''},
@@ -690,8 +710,28 @@ function responder(optIndex){
   if(state.currentAnswer) return;
   const cenario = SCENARIOS[state.stepIndex];
   const opcao = cenario.opcoes[optIndex];
+
+  // Lógica de Streak para Cenários (Combos)
+  let pontosFinais = opcao.pontos;
+  if (opcao.nivel === 'certo') {
+    state.scenarioStreak++;
+    if (state.scenarioStreak >= 2) {
+      pontosFinais += 10; // Bônus de 10 pontos por combo
+      mostrarToast('🔥 Combo de escolhas éticas! Bônus aplicado.');
+    }
+  } else {
+    state.scenarioStreak = 0;
+  }
+  // Garante que não passa de 100
+  pontosFinais = Math.max(-100, Math.min(100, pontosFinais));
+
+  // Efeito Cascata: Punição de tempo no Quiz por atalho na matemática (Cenário 3)
+  if (cenario.id === 3 && opcao.nivel === 'errado') {
+    state.quizTimePenalty = 5;
+  }
+
   state.currentAnswer = {optIndex, opcao};
-  state.answers.push({scenarioId:cenario.id, categoria:cenario.categoria, pontos:opcao.pontos, nivel:opcao.nivel});
+  state.answers.push({scenarioId:cenario.id, categoria:cenario.categoria, pontos:pontosFinais, nivel:opcao.nivel});
   verificarConquistas();
   render();
 }
@@ -735,27 +775,24 @@ function conferirCensura(){
   if(c.selected.size === 0) return;
   
   const totalSensiveis = CENSURA_PALAVRAS.filter(p => p.sensivel).length;
-  const totalNaoSensiveis = CENSURA_PALAVRAS.filter(p => !p.sensivel).length;
   
   let acertosSensiveis = 0;
-  let acertosNaoSensiveis = 0;
   let falsosPositivos = 0;
   
   CENSURA_PALAVRAS.forEach((p,i)=>{
     const marcada = c.selected.has(i);
     if(p.sensivel && marcada) acertosSensiveis++;
-    if(!p.sensivel && !marcada) acertosNaoSensiveis++;
     if(!p.sensivel && marcada) falsosPositivos++;
   });
   
-  const notaSensiveis = totalSensiveis > 0 ? (acertosSensiveis / totalSensiveis) * 70 : 70;
-  const notaNaoSensiveis = totalNaoSensiveis > 0 ? (acertosNaoSensiveis / totalNaoSensiveis) * 30 : 30;
-  const penalidade = falsosPositivos * 2;
+  // Nova matemática baseada em encontrar o perigo, não em "ficar parado"
+  const notaSensiveis = totalSensiveis > 0 ? (acertosSensiveis / totalSensiveis) * 100 : 100;
+  const penalidade = falsosPositivos * 5;
   
-  let score = Math.round(notaSensiveis + notaNaoSensiveis - penalidade);
+  let score = Math.round(notaSensiveis - penalidade);
   score = Math.max(0, Math.min(100, score));
   
-  const detail = `Dados sensíveis localizados: ${acertosSensiveis}/${totalSensiveis} · Falsos positivos: ${falsosPositivos}`;
+  const detail = `Dados sensíveis localizados: ${acertosSensiveis}/${totalSensiveis} · Falsos positivos (penalidade): ${falsosPositivos}`;
   
   c.submitted = true;
   c.score = score;
@@ -769,6 +806,9 @@ function conferirCensura(){
 function continuarCensura(){
   state.screen='quiz';
   state.quizIndex=0;
+  if (state.quizTimePenalty > 0) {
+    mostrarToast("⏱️ Atenção: Por ter copiado a matemática antes, seu tempo no quiz foi reduzido em 5s!", "warn");
+  }
   startQuizTimer();
   render();
   window.scrollTo(0,0);
@@ -785,7 +825,12 @@ function analisarPrompt(text){
   const pedeEnsinar = /(ensinar|ensinasse|como se eu fosse (te )?ensinar|explicar pra algu[ée]m|repassar (pra|para) outra pessoa|resumo pra apresentar|de um jeito simples|em linguagem simples|como se eu tivesse (\d+ )?anos)/.test(t);
   const pedeExemplo = /(exemplo|analogia|compara[çc][ãa]o|met[áa]fora|no dia a dia|pr[áa]tico|situa[çc][ãa]o real|imagina que|na pr[áa]tica)/.test(t);
   const soPerguntaCrua = wordCount <= 6 && !pedeExplicacao && !pedeFonte && !pedeTestar && !pedeEnsinar && !pedeExemplo;
-  return {wordCount, pedeExplicacao, pedeFonte, respostaPronta, pedeTestar, pedeEnsinar, pedeExemplo, soPerguntaCrua};
+  
+  // Defesa contra "hack" de palavras-chave
+  const keywordCount = [pedeExplicacao, pedeFonte, pedeTestar, pedeEnsinar, pedeExemplo].filter(Boolean).length;
+  const hackedPrompt = wordCount < 12 && keywordCount >= 2;
+
+  return {wordCount, pedeExplicacao, pedeFonte, respostaPronta, pedeTestar, pedeEnsinar, pedeExemplo, soPerguntaCrua, hackedPrompt};
 }
 
 function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
@@ -797,16 +842,26 @@ function pontuarPromptLab(a){
   if(a.soPerguntaCrua) dependencia -= 25;
   if(a.respostaPronta) dependencia -= 30;
   dependencia = clamp(dependencia, 10, 100);
+  
   let fontes = 30;
   if(a.pedeFonte) fontes += 55;
   if(a.pedeExemplo) fontes += 10;
   if(a.soPerguntaCrua) fontes -= 10;
   fontes = clamp(fontes, 10, 100);
+  
   let autoria = 70;
   if(a.respostaPronta) autoria = 15;
   else if(a.pedeEnsinar) autoria = 100;
   else if(a.pedeExplicacao) autoria = 85;
   autoria = clamp(autoria, 10, 100);
+
+  // Punição de pontuação caso o texto pareça só uma salada de palavras-chave
+  if (a.hackedPrompt) {
+    dependencia = Math.min(dependencia, 50);
+    fontes = Math.min(fontes, 50);
+    autoria = Math.min(autoria, 50);
+  }
+
   return {dependencia, fontes, autoria};
 }
 
@@ -823,6 +878,12 @@ function feedbackPromptLab(a){
   if(a.pedeEnsinar) fortes.push('Pensou em explicar pra outra pessoa depois — ótimo sinal de que quer entender de verdade, não só decorar.');
   if(a.pedeExemplo) fortes.push('Pediu exemplos ou situações práticas, o que ajuda a fixar o conteúdo.');
   if(a.soPerguntaCrua) fracos.push('O prompt foi bem direto, sem nenhum pedido de explicação, fonte ou verificação — só a pergunta crua.');
+  
+  // Feedback específico de hack
+  if(a.hackedPrompt) {
+    fracos.push('O prompt parece robótico. Você jogou várias palavras-chave soltas sem formar frases com contexto real. A IA responde melhor a diálogos bem estruturados.');
+  }
+
   return {fortes, fracos};
 }
 
@@ -860,27 +921,25 @@ function conferirDetetive(){
   if(state.detective.selected.size === 0) return;
   
   const totalSuspeitas = DETECTIVE_SENTENCES.filter(s => s.suspeita).length;
-  const totalNormais = DETECTIVE_SENTENCES.filter(s => !s.suspeita).length;
   
   let acertosSuspeitas = 0;
-  let acertosNormais = 0;
   let falsosPositivos = 0;
   
   DETECTIVE_SENTENCES.forEach((s,i)=>{
     const marcada = state.detective.selected.has(i);
     if(s.suspeita && marcada) acertosSuspeitas++;
-    if(!s.suspeita && !marcada) acertosNormais++;
     if(!s.suspeita && marcada) falsosPositivos++;
   });
   
-  const notaSuspeitas = totalSuspeitas > 0 ? (acertosSuspeitas / totalSuspeitas) * 60 : 60;
-  const notaNormais = totalNormais > 0 ? (acertosNormais / totalNormais) * 40 : 40;
-  const penalidade = falsosPositivos * 5;
+  // Nova matemática: 100 pontos baseados apenas em achar as alucinações.
+  // Cada falso alarme (marcar uma frase correta como suspeita) tira 25 pontos.
+  const notaSuspeitas = totalSuspeitas > 0 ? (acertosSuspeitas / totalSuspeitas) * 100 : 100;
+  const penalidade = falsosPositivos * 25; 
   
-  let score = Math.round(notaSuspeitas + notaNormais - penalidade);
-  score = Math.max(0, Math.min(100, score));
+  let score = Math.round(notaSuspeitas - penalidade);
+  score = Math.max(0, Math.min(100, score)); // Trava entre 0 e 100
   
-  const detail = `Alucinações encontradas: ${acertosSuspeitas}/${totalSuspeitas} · Falsos alarmes: ${falsosPositivos}`;
+  const detail = `Alucinações encontradas: ${acertosSuspeitas}/${totalSuspeitas} · Falsos alarmes (penalidade): ${falsosPositivos}`;
   
   state.detective.submitted = true;
   state.detective.score = score;
@@ -894,7 +953,9 @@ function conferirDetetive(){
 /* ---------- Quiz com cronômetro ---------- */
 function startQuizTimer(){
   clearInterval(quizTimerHandle);
-  state.quizTimeLeft = QUIZ_TIME;
+  const tempoEfetivo = QUIZ_TIME - state.quizTimePenalty;
+  state.quizTimeLeft = tempoEfetivo;
+  
   quizTimerHandle = setInterval(()=>{
     state.quizTimeLeft--;
     if(state.quizTimeLeft <= 0){
@@ -902,18 +963,18 @@ function startQuizTimer(){
       quizTimerHandle = null;
       if(!state.quizAnswer) quizTimeout();
     } else {
-      updateQuizTimerDOM();
+      updateQuizTimerDOM(tempoEfetivo);
     }
   }, 1000);
 }
 function stopQuizTimer(){ clearInterval(quizTimerHandle); quizTimerHandle = null; }
 
-function updateQuizTimerDOM(){
+function updateQuizTimerDOM(tempoBase){
   const fill = document.getElementById('quiz-timerfill');
   const num = document.getElementById('quiz-timernum');
   if(!fill || !num) return;
   const timeLeft = state.quizTimeLeft;
-  const timerPct = Math.max(0, Math.round(timeLeft / QUIZ_TIME * 100));
+  const timerPct = Math.max(0, Math.round(timeLeft / tempoBase * 100));
   const timerColor = timeLeft <= 5 ? 'var(--coral)' : 'var(--teal)';
   fill.style.width = timerPct + '%';
   fill.style.background = timerColor;
@@ -924,7 +985,7 @@ function quizTimeout(){
   if(state.quizAnswer) return;
   const item = QUIZ[state.quizIndex];
   state.quizAnswer = {escolha:null, acertou:false, timeout:true};
-  state.quizAnswers.push({categoria:item.categoria, pontos:15});
+  state.quizAnswers.push({categoria:item.categoria, pontos:0});
   state.quizStreak = 0;
   verificarConquistas();
   render();
@@ -936,7 +997,7 @@ function responderQuiz(escolha){
   const item = QUIZ[state.quizIndex];
   const acertou = escolha === item.correta;
   state.quizAnswer = {escolha, acertou, timeout:false};
-  state.quizAnswers.push({categoria:item.categoria, pontos: acertou ? 100 : 15});
+  state.quizAnswers.push({categoria:item.categoria, pontos: acertou ? 100 : 0});
   state.quizStreak = acertou ? state.quizStreak + 1 : 0;
   verificarConquistas();
   render();
@@ -1010,7 +1071,7 @@ function enviarDadosCompletos(){
     const r = state.resultado;
     const f = state.feedback;
     const payload = {
-      timestamp: new Date().toISOString(),
+      timestamp: obterDataHoraLocal(),
       perfil: state.player.perfil,
       nivel: r.nivel,
       overall: r.overall,
@@ -1025,9 +1086,6 @@ function enviarDadosCompletos(){
       palavra: f.palavra,
       recomendacao: f.recomendacao
     };
-    // mode:'no-cors' significa que nunca saberemos com certeza se o Apps Script
-    // processou com sucesso (a resposta vem opaca). Por isso, tratamos qualquer
-    // falha de rede como aviso visível ao invés de engolir o erro silenciosamente.
     fetch(SHEET_ENDPOINT_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -1071,7 +1129,7 @@ function enviarFeedbackERevelar(){
 /* ---------- Exportação de resultado ---------- */
 function buildPayload(){
   return {
-    timestamp:new Date().toISOString(),
+    timestamp: obterDataHoraLocal(),
     perfil:state.player.perfil,
     scores:state.resultado.scores,
     overall:state.resultado.overall,
@@ -1162,20 +1220,29 @@ function copiarResumo(){
   }
 }
 
-function baixarResultado(){
-  try{
-    const payload = buildPayload();
-    payload.feedback = state.feedback;
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'resultado-ia-consciente-' + Date.now() + '.json';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(()=> URL.revokeObjectURL(url), 1000);
-  }catch(e){
-    console.error(e);
-    alert('Não foi possível baixar automaticamente. Use "Copiar resumo" em vez disso.');
-  }
+/* ---------- Função Geradora de PDF ---------- */
+function baixarPDF(){
+  mostrarToast('Gerando PDF, por favor aguarde...');
+  const element = document.querySelector('.card');
+  const acoesA = element.querySelector('.row[style*="margin-top:32px"]');
+  const acoesB = element.querySelector('.row[style*="border-top"]');
+  if(acoesA) acoesA.style.display = 'none';
+  if(acoesB) acoesB.style.display = 'none';
+
+  const opt = {
+    margin:       10,
+    filename:     'resultado-ia-consciente.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: 'avoid-all' } // Impede que o PDF corte os elementos no meio
+  };
+
+  html2pdf().set(opt).from(element).save().then(() => {
+    if(acoesA) acoesA.style.display = 'flex';
+    if(acoesB) acoesB.style.display = 'flex';
+    mostrarToast('PDF baixado com sucesso!');
+  });
 }
 
 function tentarReenviar(){
@@ -1282,7 +1349,7 @@ function screenPerfil(){
         <label for="inp-perfil">Qual seu momento de estudo hoje?</label>
         <select id="inp-perfil">
           <option value="">Selecione uma opção</option>
-          <option value="Cursinho popular / vestibular">Cursinho popular, me preparando para o vestibular</option>
+          <option value="Cursinho">Cursinho, me preparando para o vestibular</option>
           <option value="ENEM sem cursinho">Estudando para o ENEM por conta própria</option>
           <option value="Graduação / universidade">Já estou na graduação / universidade</option>
           <option value="Outro">Outro</option>
@@ -1566,8 +1633,9 @@ function screenCensura(){
 function screenQuiz(){
   const item = QUIZ[state.quizIndex];
   const answered = !!state.quizAnswer;
+  const tempoBase = QUIZ_TIME - state.quizTimePenalty;
   const timeLeft = state.quizTimeLeft;
-  const timerPct = Math.max(0, Math.round(timeLeft / QUIZ_TIME * 100));
+  const timerPct = Math.max(0, Math.round(timeLeft / tempoBase * 100));
   const timerColor = timeLeft <= 5 ? 'var(--coral)' : 'var(--teal)';
 
   let feedbackHtml = '';
@@ -1743,7 +1811,7 @@ function screenResultado(){
       ${envioHtml}
 
       <div class="row" style="margin-top:32px;">
-        <button class="btn secondary" onclick="baixarResultado()">Baixar resultado (.json)</button>
+        <button class="btn secondary" onclick="baixarPDF()">Baixar resultado (.pdf)</button>
         <button class="link-btn" onclick="copiarResumo()">Copiar resumo em texto</button>
       </div>
 
