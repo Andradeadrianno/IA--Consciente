@@ -1131,11 +1131,15 @@ function enviarDadosCompletos(){
 function enviarFeedbackERevelar(){
   const frequencia = document.getElementById('fb-frequencia').value;
   const mudanca = document.getElementById('fb-mudanca').value;
-  const area = document.getElementById('fb-area').value;
+  // NOVO: lê todos os checkboxes marcados em vez de um select único
+  const checkboxes = document.querySelectorAll('input[name="fb-area"]:checked');
+  const areasSelecionadas = Array.from(checkboxes).map(cb => cb.value);
+  const area = areasSelecionadas.join(', ');
+  
   const palavra = document.getElementById('fb-palavra').value.trim();
   const recomendacao = document.getElementById('fb-recomendacao').value;
 
-  if(!frequencia || !mudanca || !area || !recomendacao){
+  if(!frequencia || !mudanca || areasSelecionadas.length === 0 || !recomendacao){
     alert('Responda todas as perguntas obrigatórias para continuar.');
     return;
   }
@@ -1707,15 +1711,24 @@ function screenFeedback(){
       </div>
 
       <div class="field">
-        <label for="fb-area">3. Qual área você acha que mais precisa melhorar?</label>
-        <select id="fb-area">
-          <option value="">Selecione...</option>
-          <option value="Verificação de fontes">Verificar fontes e dados</option>
-          <option value="Autoria e ética">Autoria e ética acadêmica</option>
-          <option value="Autonomia nos estudos">Autonomia nos estudos</option>
-          <option value="Vieses e alucinações">Identificar vieses e alucinações</option>
-          <option value="Privacidade digital">Privacidade e segurança</option>
-        </select>
+        <label>3. Qual(is) área(s) você acha que mais precisa melhorar? <span style="font-weight:400;color:var(--ink-soft);">(pode marcar mais de uma)</span></label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+            <input type="checkbox" name="fb-area" value="Verificação de fontes" style="width:16px;height:16px;accent-color:var(--ink);"> Verificar fontes e dados
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+            <input type="checkbox" name="fb-area" value="Autoria e ética" style="width:16px;height:16px;accent-color:var(--ink);"> Autoria e ética acadêmica
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+            <input type="checkbox" name="fb-area" value="Autonomia nos estudos" style="width:16px;height:16px;accent-color:var(--ink);"> Autonomia nos estudos
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+            <input type="checkbox" name="fb-area" value="Vieses e alucinações" style="width:16px;height:16px;accent-color:var(--ink);"> Identificar vieses e alucinações
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+            <input type="checkbox" name="fb-area" value="Privacidade digital" style="width:16px;height:16px;accent-color:var(--ink);"> Privacidade e segurança
+          </label>
+        </div>
       </div>
 
       <div class="field">
